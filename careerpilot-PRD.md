@@ -6,7 +6,7 @@
 
 **Project Name:** CareerPilot AI
 **Type:** AI-Driven Full Stack SaaS Platform — Frontend
-**Framework:** Next.js 15+ (App Router)
+**Framework:** Next.js 16 (App Router)
 
 CareerPilot AI's frontend delivers a premium, production-ready interface for users to build ATS-friendly resumes, prepare for interviews, track job applications, analyze skill gaps, and interact with AI career assistants.
 
@@ -16,7 +16,7 @@ CareerPilot AI's frontend delivers a premium, production-ready interface for use
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 15+ (App Router) |
+| Framework | Next.js 16 (App Router) |
 | Language | TypeScript |
 | Styling | Tailwind CSS |
 | Component Library | ShadCN UI |
@@ -27,7 +27,7 @@ CareerPilot AI's frontend delivers a premium, production-ready interface for use
 | Animations | Framer Motion |
 | Charts | Recharts |
 | Theming | Next Themes |
-| HTTP Client | Axios |
+| HTTP Client | Axios (latest version) |
 
 ---
 
