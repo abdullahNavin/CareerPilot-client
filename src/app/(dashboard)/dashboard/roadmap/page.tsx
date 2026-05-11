@@ -5,14 +5,28 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, GlassCard } 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Target, ArrowRight, Loader2, BookOpen } from "lucide-react";
+import { Target, Loader2, BookOpen } from "lucide-react";
+
+type RoadmapMilestone = {
+  title: string;
+  duration: string;
+  status: "current" | "upcoming";
+  skills: string[];
+  resources: string[];
+};
+
+type RoadmapResult = {
+  title: string;
+  estimatedTime: string;
+  milestones: RoadmapMilestone[];
+};
 
 export default function CareerRoadmapPage() {
   const [currentSkills, setCurrentSkills] = useState("");
   const [targetCareer, setTargetCareer] = useState("");
   const [experience, setExperience] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [roadmap, setRoadmap] = useState<any>(null);
+  const [roadmap, setRoadmap] = useState<RoadmapResult | null>(null);
 
   const generateRoadmap = () => {
     if (!currentSkills || !targetCareer || !experience) return;
@@ -64,7 +78,7 @@ export default function CareerRoadmapPage() {
         <Card className="lg:col-span-1 h-fit border-border">
           <CardHeader>
             <CardTitle>Your Details</CardTitle>
-            <CardDescription>Tell us where you are to map where you're going.</CardDescription>
+            <CardDescription>Tell us where you are to map where you&apos;re going.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
@@ -130,7 +144,7 @@ export default function CareerRoadmapPage() {
               </div>
 
               <div className="relative border-l-2 border-border ml-4 space-y-12 pb-8">
-                {roadmap.milestones.map((milestone: any, i: number) => (
+                {roadmap.milestones.map((milestone, i: number) => (
                   <div key={i} className="relative pl-8">
                     <div className={`absolute -left-[11px] top-1 h-5 w-5 rounded-full border-4 border-background ${milestone.status === 'current' ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
                     

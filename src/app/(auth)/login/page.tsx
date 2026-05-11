@@ -1,17 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, LoginInput } from "@/schemas/auth";
+import type { AxiosError } from "axios";
+import { loginSchema, type LoginInput } from "@/schemas/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { GlassCard, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { GlassCard, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import { useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { useRouter } from "next/navigation";
 import { api } from "@/services/api";
+import { normalizeUser } from "@/lib/auth";
 import { LogIn } from "lucide-react";
+import type { ApiResponse, AuthPayload } from "@/types/api";
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -31,21 +34,23 @@ export default function LoginPage() {
     setIsLoading(true);
     setError("");
     try {
-      const response = await api.post("/auth/login", data);
-      
-      // Handle standard token response
-      const token = response.data.token || response.data.accessToken;
-      const user = response.data.user || response.data;
+      const response = await api.post<ApiResponse<AuthPayload>>("/auth/login", data);
+      const payload = response.data.data;
 
-      if (token) {
-         setAuth(user, token);
-         router.push("/dashboard"); // Redirect to dashboard
-      } else {
-         setError("Invalid response from server. Missing token.");
+      if (!payload?.accessToken || !payload?.user) {
+        setError("Invalid response from server. Missing token.");
+        return;
       }
-    } catch (err: any) {
-      console.error(err);
-      setError(err.response?.data?.message || err.response?.data?.error || "Invalid credentials. Please try again.");
+
+      setAuth(normalizeUser(payload.user), payload.accessToken);
+      router.push("/dashboard");
+    } catch (error) {
+      const err = error as AxiosError<{ message?: string; error?: string }>;
+      setError(
+        err.response?.data?.message ??
+          err.response?.data?.error ??
+          "Invalid credentials. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -61,7 +66,7 @@ export default function LoginPage() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              "This platform completely transformed how I prepared for my career transition. The AI insights were spot on."
+              &ldquo;This platform completely transformed how I prepared for my career transition. The AI insights were spot on.&rdquo;
             </p>
             <footer className="text-sm">Sofia Davis</footer>
           </blockquote>
@@ -140,7 +145,7 @@ export default function LoginPage() {
           </GlassCard>
 
           <p className="px-8 text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/register" className="underline underline-offset-4 hover:text-primary">
               Sign up
             </Link>

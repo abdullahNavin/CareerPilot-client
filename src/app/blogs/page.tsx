@@ -46,22 +46,22 @@ export default function BlogsPage() {
         <div className="grid md:grid-cols-3 gap-6">
           {featured.map((post, i) => (
             <motion.div key={post.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}>
-              <Card className="h-full flex flex-col hover:-translate-y-1 transition-all duration-300 bg-[var(--gradient-card)] border-border/50">
-                <CardHeader>
-                  <Badge variant="secondary" className="w-fit mb-2">{post.category}</Badge>
-                  <CardTitle className="text-lg leading-snug">{post.title}</CardTitle>
-                  <CardDescription>{post.excerpt}</CardDescription>
-                </CardHeader>
-                <CardContent className="mt-auto flex items-center justify-between text-sm text-muted-foreground">
-                  <div className="flex items-center gap-3">
-                    <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {post.date}</span>
-                    <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {post.readTime}</span>
-                  </div>
-                  <Button variant="ghost" size="sm" className="text-primary p-0 h-auto hover:bg-transparent">
-                    Read <ArrowRight className="ml-1 h-3.5 w-3.5" />
-                  </Button>
-                </CardContent>
-              </Card>
+              <Link href={`/blogs/${post.id}`} className="block h-full">
+                <Card className="h-full flex flex-col hover:-translate-y-1 transition-all duration-300 bg-[var(--gradient-card)] border-border/50 hover:border-primary/40">
+                  <CardHeader>
+                    <Badge variant="secondary" className="w-fit mb-2">{post.category}</Badge>
+                    <CardTitle className="text-lg leading-snug">{post.title}</CardTitle>
+                    <CardDescription>{post.excerpt}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="mt-auto flex items-center justify-between text-sm text-muted-foreground">
+                    <div className="flex items-center gap-3">
+                      <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" /> {post.date}</span>
+                      <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {post.readTime}</span>
+                    </div>
+                    <span className="flex items-center gap-1 text-primary font-medium">Read <ArrowRight className="ml-1 h-3.5 w-3.5" /></span>
+                  </CardContent>
+                </Card>
+              </Link>
             </motion.div>
           ))}
         </div>

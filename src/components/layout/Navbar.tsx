@@ -4,10 +4,11 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
-import { Menu, X, Sun, Moon, ChevronDown, LayoutDashboard, Settings, LogOut, User, BrainCircuit } from "lucide-react";
+import { Menu, X, Sun, Moon, ChevronDown, LayoutDashboard, Settings, LogOut, BrainCircuit } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/authStore";
 import { useTheme } from "next-themes";
+import { useHydrated } from "@/hooks/use-hydrated";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,9 +42,7 @@ export function Navbar() {
 
   const { isAuthenticated, user, logout } = useAuthStore();
   const { theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => { setMounted(true); }, []);
+  const mounted = useHydrated();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 10);
@@ -125,7 +124,7 @@ export function Navbar() {
                   <div className="w-7 h-7 rounded-full bg-[var(--gradient-cta)] flex items-center justify-center text-white text-xs font-bold">
                     {user?.name?.[0] ?? "U"}
                   </div>
-                  <span className="text-sm font-medium">{user?.name?.split(" ")[0]}</span>
+                  <span className="text-sm font-medium">{user?.name?.split(" ")[0] ?? "User"}</span>
                   <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
                 </button>
               </DropdownMenuTrigger>

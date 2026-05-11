@@ -15,6 +15,10 @@ const profileSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
   bio: z.string().optional(),
+  skills: z.string().optional(),
+  github: z.string().url().optional().or(z.literal("")),
+  linkedin: z.string().url().optional().or(z.literal("")),
+  portfolio: z.string().url().optional().or(z.literal("")),
 });
 type ProfileForm = z.infer<typeof profileSchema>;
 
@@ -24,10 +28,19 @@ export default function SettingsPage() {
 
   const { register, handleSubmit, formState: { errors } } = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
-    defaultValues: { name: user?.name ?? "", email: user?.email ?? "", bio: "" },
+    defaultValues: { 
+      name: user?.name ?? "", 
+      email: user?.email ?? "", 
+      bio: "",
+      skills: "React, TypeScript, Next.js",
+      github: "",
+      linkedin: "",
+      portfolio: ""
+    },
   });
 
-  const onSave = async (data: ProfileForm) => {
+  const onSave = async (_data: ProfileForm) => {
+    void _data;
     await new Promise((r) => setTimeout(r, 800));
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
@@ -65,11 +78,16 @@ export default function SettingsPage() {
             <CardContent>
               <form onSubmit={handleSubmit(onSave)} className="space-y-5">
                 <div className="flex items-center gap-6 pb-6 border-b border-border">
-                  <div className="h-20 w-20 rounded-full bg-[var(--gradient-cta)] flex items-center justify-center text-white font-bold text-2xl shrink-0">
-                    {user?.name?.[0] ?? "U"}
+                  <div className="relative group">
+                    <div className="h-20 w-20 rounded-full bg-[var(--gradient-cta)] flex items-center justify-center text-white font-bold text-2xl shrink-0 cursor-pointer overflow-hidden">
+                      {user?.name?.[0] ?? "U"}
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity text-xs font-medium">
+                        Upload
+                      </div>
+                    </div>
                   </div>
                   <div>
-                    <p className="font-medium">{user?.name}</p>
+                    <p className="font-medium text-lg">{user?.name}</p>
                     <p className="text-sm text-muted-foreground">{user?.email}</p>
                     <Badge variant="secondary" className="mt-1 capitalize">{user?.role}</Badge>
                   </div>
@@ -94,6 +112,22 @@ export default function SettingsPage() {
                     placeholder="Tell us a bit about yourself..."
                     className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
                   />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-sm font-medium">Skills (comma separated)</label>
+                  <Input {...register("skills")} placeholder="e.g. Python, React, Data Analysis" />
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">LinkedIn Profile</label>
+                    <Input {...register("linkedin")} placeholder="https://linkedin.com/in/..." />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium">GitHub Profile</label>
+                    <Input {...register("github")} placeholder="https://github.com/..." />
+                  </div>
                 </div>
 
                 <div className="flex items-center gap-4">

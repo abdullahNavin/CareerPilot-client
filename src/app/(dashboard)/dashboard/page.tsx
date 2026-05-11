@@ -1,10 +1,8 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle, GlassCard } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthStore } from "@/store/authStore";
 import { 
-  BarChart, 
-  Bar, 
   XAxis, 
   YAxis, 
   CartesianGrid, 
@@ -39,7 +37,7 @@ export default function DashboardOverviewPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
-        <p className="text-muted-foreground">Welcome back, {user?.name || "User"}. Here's your career progress.</p>
+        <p className="text-muted-foreground">Welcome back, {user?.name || "User"}. Here&apos;s your career progress.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

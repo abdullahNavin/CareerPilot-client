@@ -1,0 +1,82 @@
+import { Metadata } from "next";
+import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Terms of Service | CareerPilot AI",
+  description: "Read the CareerPilot AI Terms of Service and usage agreement.",
+};
+
+const SECTIONS = [
+  {
+    title: "1. Acceptance of Terms",
+    content: `By creating an account or using CareerPilot AI (the "Service"), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service. These Terms apply to all users, including visitors, registered users, mentors, and administrators.`,
+  },
+  {
+    title: "2. Eligibility",
+    content: `You must be at least 16 years old to use CareerPilot AI. By using the Service, you represent and warrant that you meet this requirement and that all information you provide is accurate and complete.`,
+  },
+  {
+    title: "3. User Accounts",
+    content: `You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account. Notify us immediately at support@careerpilot.ai if you suspect unauthorized access. We reserve the right to suspend accounts that violate these Terms.`,
+  },
+  {
+    title: "4. Acceptable Use",
+    content: `You agree not to: upload malicious content; attempt to reverse engineer or scrape the Service; impersonate other users; use the AI features to generate illegal or harmful content; or resell access to the Service without authorization. Violation may result in immediate account termination.`,
+  },
+  {
+    title: "5. AI-Generated Content",
+    content: `The AI-generated career advice, resume feedback, roadmaps, and interview responses are provided for informational purposes only. CareerPilot AI does not guarantee employment outcomes. You should independently verify any career information provided by the Service.`,
+  },
+  {
+    title: "6. Intellectual Property",
+    content: `CareerPilot AI and its licensors own all intellectual property rights in the Service. You retain ownership of content you upload (e.g., resumes). By uploading content, you grant us a limited, non-exclusive license to process it to provide the Service. We will not claim ownership of your content.`,
+  },
+  {
+    title: "7. Subscription and Payments",
+    content: `Some features require a paid subscription. Subscriptions are billed in advance on a monthly or annual basis. All fees are non-refundable except as required by law or expressly stated in our refund policy. We reserve the right to change pricing with 30 days' notice.`,
+  },
+  {
+    title: "8. Disclaimer of Warranties",
+    content: `The Service is provided "as is" and "as available" without warranties of any kind, either express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not warrant that the Service will be uninterrupted or error-free.`,
+  },
+  {
+    title: "9. Limitation of Liability",
+    content: `To the fullest extent permitted by law, CareerPilot AI shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the Service. Our total liability shall not exceed the amount you paid us in the preceding 12 months.`,
+  },
+  {
+    title: "10. Governing Law",
+    content: `These Terms are governed by the laws of the State of California, USA, without regard to conflict of law principles. Any disputes shall be resolved in the courts of San Francisco County, California, or through binding arbitration as agreed by the parties.`,
+  },
+  {
+    title: "11. Changes to Terms",
+    content: `We reserve the right to modify these Terms at any time. We will provide at least 30 days notice of material changes via email or platform notification. Your continued use of the Service after changes become effective constitutes your acceptance.`,
+  },
+];
+
+export default function TermsPage() {
+  return (
+    <div className="container mx-auto px-4 py-16 max-w-4xl space-y-12">
+      <div className="space-y-4 pb-8 border-b border-border">
+        <h1 className="text-4xl font-bold">Terms of Service</h1>
+        <p className="text-muted-foreground">Last updated: May 10, 2026</p>
+        <p className="text-muted-foreground leading-relaxed">
+          Please read these Terms of Service carefully before using CareerPilot AI. These Terms constitute a legally binding agreement between you and CareerPilot AI, Inc.
+        </p>
+      </div>
+
+      <div className="space-y-10">
+        {SECTIONS.map((section, i) => (
+          <div key={i} className="space-y-3">
+            <h2 className="text-xl font-bold text-foreground">{section.title}</h2>
+            <p className="text-muted-foreground leading-relaxed">{section.content}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="pt-8 border-t border-border text-sm text-muted-foreground flex gap-4">
+        <Link href="/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+        <Link href="/contact" className="hover:text-primary transition-colors">Contact Us</Link>
+      </div>
+    </div>
+  );
+}

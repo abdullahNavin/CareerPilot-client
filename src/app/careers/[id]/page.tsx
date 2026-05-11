@@ -1,57 +1,93 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import type { BadgeProps } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { GlassCard } from "@/components/ui/card";
+import { Card, CardContent, GlassCard } from "@/components/ui/card";
 import {
   MapPin, DollarSign, TrendingUp, Star, ArrowLeft,
-  Users, Clock, BookOpen, CheckCircle2, Target, ArrowRight
+  Users, Clock, BookOpen, CheckCircle2, Target, ArrowRight,
 } from "lucide-react";
 
-const CAREERS: Record<string, any> = {
+type RelatedCareer = {
+  id: number;
+  title: string;
+  salary: string;
+  demand: string;
+};
+
+type CareerDetail = {
+  id: number;
+  title: string;
+  category: string;
+  salary: string;
+  demand: string;
+  rating: number;
+  location: string;
+  description: string;
+  growth: string;
+  openings: string;
+  skills: string[];
+  dayInLife: string[];
+  related: RelatedCareer[];
+};
+
+const CAREERS: Record<string, CareerDetail> = {
   "1": {
-    id: 1, title: "AI / ML Engineer", category: "Technology",
-    salary: "$140k–$250k", demand: "Very High", rating: 4.9, location: "Remote",
+    id: 1,
+    title: "AI / ML Engineer",
+    category: "Technology",
+    salary: "$140k-$250k",
+    demand: "Very High",
+    rating: 4.9,
+    location: "Remote",
     description: "AI/ML Engineers design, build, and deploy machine learning models and AI systems at scale. They sit at the intersection of software engineering and data science, turning research into production-grade systems.",
     growth: "+40% over 5 years",
     openings: "12,000+ active openings",
     skills: ["Python", "TensorFlow / PyTorch", "MLOps", "Docker", "Cloud (AWS/GCP)", "Statistics", "Data Engineering"],
     dayInLife: ["Design and train ML models for production", "Collaborate with data scientists on experiments", "Optimize model inference latency", "Review and merge model deployment PRs"],
     related: [
-      { id: 5, title: "Data Scientist", salary: "$110k–$190k", demand: "High" },
-      { id: 6, title: "DevOps Engineer", salary: "$120k–$185k", demand: "High" },
+      { id: 5, title: "Data Scientist", salary: "$110k-$190k", demand: "High" },
+      { id: 6, title: "DevOps Engineer", salary: "$120k-$185k", demand: "High" },
     ],
   },
   "2": {
-    id: 2, title: "Full Stack Developer", category: "Technology",
-    salary: "$110k–$180k", demand: "High", rating: 4.8, location: "Hybrid",
+    id: 2,
+    title: "Full Stack Developer",
+    category: "Technology",
+    salary: "$110k-$180k",
+    demand: "High",
+    rating: 4.8,
+    location: "Hybrid",
     description: "Full Stack Developers build end-to-end web applications, handling everything from the UI in the browser to the database on the server. They are versatile engineers who can own an entire feature.",
     growth: "+25% over 5 years",
     openings: "45,000+ active openings",
     skills: ["React / Next.js", "Node.js", "TypeScript", "PostgreSQL", "REST / GraphQL APIs", "Git", "Docker"],
     dayInLife: ["Build and iterate on frontend features", "Design database schemas", "Write and review API endpoints", "Participate in sprint planning"],
     related: [
-      { id: 1, title: "AI / ML Engineer", salary: "$140k–$250k", demand: "Very High" },
-      { id: 3, title: "Product Manager", salary: "$120k–$200k", demand: "High" },
+      { id: 1, title: "AI / ML Engineer", salary: "$140k-$250k", demand: "Very High" },
+      { id: 3, title: "Product Manager", salary: "$120k-$200k", demand: "High" },
     ],
   },
 };
 
-export default function CareerDetailPage({ params }: { params: { id: string } }) {
-  const career = CAREERS[params.id];
+export default async function CareerDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const career = CAREERS[id];
   if (!career) notFound();
 
-  const demandColor: Record<string, any> = { "Very High": "success", "High": "premium", "Steady": "secondary" };
+  const demandColor: Record<string, BadgeProps["variant"]> = {
+    "Very High": "success",
+    High: "premium",
+    Steady: "secondary",
+  };
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl space-y-12">
-      {/* Back */}
       <Link href="/careers" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
         <ArrowLeft className="h-4 w-4" /> Back to Careers
       </Link>
 
-      {/* Header */}
       <div className="grid lg:grid-cols-3 gap-8 items-start">
         <div className="lg:col-span-2 space-y-4">
           <div className="flex items-center gap-3">
@@ -88,7 +124,6 @@ export default function CareerDetailPage({ params }: { params: { id: string } })
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
-        {/* Required Skills */}
         <Card>
           <CardContent className="pt-6 space-y-4">
             <h2 className="text-xl font-bold flex items-center gap-2"><BookOpen className="h-5 w-5 text-primary" /> Required Skills</h2>
@@ -100,7 +135,6 @@ export default function CareerDetailPage({ params }: { params: { id: string } })
           </CardContent>
         </Card>
 
-        {/* Day in the Life */}
         <Card>
           <CardContent className="pt-6 space-y-4">
             <h2 className="text-xl font-bold flex items-center gap-2"><Clock className="h-5 w-5 text-secondary" /> Day in the Life</h2>
@@ -115,7 +149,6 @@ export default function CareerDetailPage({ params }: { params: { id: string } })
         </Card>
       </div>
 
-      {/* AI Roadmap Preview */}
       <section className="space-y-4">
         <h2 className="text-2xl font-bold flex items-center gap-2"><Target className="h-6 w-6 text-primary" /> AI Career Roadmap Preview</h2>
         <GlassCard className="p-8 text-center space-y-4">
@@ -126,11 +159,10 @@ export default function CareerDetailPage({ params }: { params: { id: string } })
         </GlassCard>
       </section>
 
-      {/* Related Careers */}
       <section className="space-y-4">
         <h2 className="text-2xl font-bold">Related Careers</h2>
         <div className="grid sm:grid-cols-2 gap-4">
-          {career.related.map((rel: any) => (
+          {career.related.map((rel) => (
             <Link key={rel.id} href={`/careers/${rel.id}`}>
               <Card className="hover:border-primary/40 hover:-translate-y-0.5 transition-all cursor-pointer">
                 <CardContent className="p-5 flex items-center justify-between">

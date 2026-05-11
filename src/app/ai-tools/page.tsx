@@ -1,10 +1,21 @@
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import type { BadgeProps } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { FileText, Target, MessageSquare, TrendingUp, Mail, Zap, ArrowRight } from "lucide-react";
 
-const AI_TOOLS = [
+type ToolCard = {
+  href: string;
+  icon: typeof FileText;
+  title: string;
+  description: string;
+  badge: string;
+  badgeVariant: BadgeProps["variant"];
+  gradient: string;
+};
+
+const AI_TOOLS: ToolCard[] = [
   {
     href: "/dashboard/resume",
     icon: FileText,
@@ -91,7 +102,7 @@ export default function AIToolsPage() {
                 <div className="bg-background/50 backdrop-blur-sm p-3 rounded-xl border border-border/50">
                   <tool.icon className="h-7 w-7 text-primary" />
                 </div>
-                <Badge variant={tool.badgeVariant as any} className="text-xs">{tool.badge}</Badge>
+                <Badge variant={tool.badgeVariant} className="text-xs">{tool.badge}</Badge>
               </div>
               <CardTitle className="text-xl">{tool.title}</CardTitle>
               <CardDescription className="text-sm leading-relaxed">{tool.description}</CardDescription>

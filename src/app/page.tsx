@@ -202,7 +202,7 @@ export default function Home() {
             ].map((t, i) => (
               <GlassCard key={i} className="p-6 space-y-4">
                 <div className="flex text-accent">{"★".repeat(5)}</div>
-                <p className="text-sm italic text-muted-foreground">"{t.quote}"</p>
+                <p className="text-sm italic text-muted-foreground">&ldquo;{t.quote}&rdquo;</p>
                 <div>
                   <div className="font-semibold">{t.name}</div>
                   <div className="text-xs text-muted-foreground">{t.role}</div>

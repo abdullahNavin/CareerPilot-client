@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 export function Footer() {
   return (
@@ -38,7 +37,7 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-border mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p>© {new Date().getFullYear()} CareerPilot AI. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} CareerPilot AI. All rights reserved.</p>
         </div>
       </div>
     </footer>

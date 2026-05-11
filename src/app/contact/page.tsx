@@ -15,13 +15,17 @@ const schema = z.object({
   subject: z.string().min(3, "Subject is required"),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
+
 type FormData = z.infer<typeof schema>;
 
 export default function ContactPage() {
   const [success, setSuccess] = useState(false);
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({ resolver: zodResolver(schema) });
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = async (_data: FormData) => {
+    void _data;
     await new Promise((r) => setTimeout(r, 1200));
     setSuccess(true);
   };
@@ -30,7 +34,7 @@ export default function ContactPage() {
     <div className="container mx-auto px-4 py-16 max-w-5xl space-y-12">
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold">Get in Touch</h1>
-        <p className="text-muted-foreground max-w-xl mx-auto">Have a question, idea, or just want to say hello? We'd love to hear from you.</p>
+        <p className="text-muted-foreground max-w-xl mx-auto">Have a question, idea, or just want to say hello? We&apos;d love to hear from you.</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-12 items-start">
@@ -38,7 +42,7 @@ export default function ContactPage() {
           {[
             { icon: Mail, label: "Email Us", value: "hello@careerpilot.ai" },
             { icon: Phone, label: "Call Us", value: "+1 (555) 000-0000" },
-            { icon: MessageSquare, label: "Live Chat", value: "Available 9am–6pm EST" },
+            { icon: MessageSquare, label: "Live Chat", value: "Available 9am to 6pm EST" },
           ].map((item, i) => (
             <div key={i} className="flex items-center gap-4">
               <div className="bg-primary/10 p-3 rounded-xl text-primary">
@@ -57,7 +61,7 @@ export default function ContactPage() {
             <div className="text-center space-y-4 py-8">
               <CheckCircle2 className="h-16 w-16 text-success mx-auto" />
               <h3 className="text-2xl font-bold">Message Sent!</h3>
-              <p className="text-muted-foreground">We'll get back to you within 24 hours.</p>
+              <p className="text-muted-foreground">We&apos;ll get back to you within 24 hours.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -75,7 +79,7 @@ export default function ContactPage() {
               </div>
               <div className="space-y-1">
                 <label className="text-sm font-medium">Subject</label>
-                <Input {...register("subject")} placeholder="What's on your mind?" className={errors.subject ? "border-destructive" : ""} />
+                <Input {...register("subject")} placeholder="What&apos;s on your mind?" className={errors.subject ? "border-destructive" : ""} />
                 {errors.subject && <p className="text-xs text-destructive">{errors.subject.message}</p>}
               </div>
               <div className="space-y-1">

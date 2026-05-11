@@ -7,12 +7,19 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { UploadCloud, FileText, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
 
+type ResumeAnalysisResult = {
+  score: number;
+  missingSkills: string[];
+  recommendations: string[];
+  formatting: string;
+};
+
 export default function ResumeAnalyzerPage() {
   const [file, setFile] = useState<File | null>(null);
   const [role, setRole] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [results, setResults] = useState<any>(null);
+  const [results, setResults] = useState<ResumeAnalysisResult | null>(null);
 
   const handleFileDrop = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

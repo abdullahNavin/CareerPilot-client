@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { AppRole } from "@/types/api";
 
 export const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -23,6 +24,6 @@ export type User = {
   id: string;
   name: string;
   email: string;
-  role: "user" | "mentor" | "admin";
+  role: AppRole;
   avatar?: string;
 };

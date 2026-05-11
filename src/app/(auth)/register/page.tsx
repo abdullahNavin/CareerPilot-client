@@ -1,15 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema, RegisterInput } from "@/schemas/auth";
+import type { AxiosError } from "axios";
+import { registerSchema, type RegisterInput } from "@/schemas/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { GlassCard, CardContent } from "@/components/ui/card";
 import Link from "next/link";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/services/api";
+import type { ApiResponse, AuthPayload } from "@/types/api";
 
 export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,15 +30,20 @@ export default function RegisterPage() {
     setIsLoading(true);
     setError("");
     try {
-      await api.post("/auth/register", {
+      const response = await api.post<ApiResponse<AuthPayload>>("/auth/register", {
         name: data.name,
         email: data.email,
-        password: data.password
+        password: data.password,
       });
-      router.push("/login?registered=true");
-    } catch (err: any) {
-      console.error(err);
-      setError(err.response?.data?.message || err.response?.data?.error || "Registration failed. Try again.");
+      const email = response.data.data.user.email;
+      router.push(`/login?registered=true&email=${encodeURIComponent(email)}`);
+    } catch (error) {
+      const err = error as AxiosError<{ message?: string; error?: string }>;
+      setError(
+        err.response?.data?.message ??
+          err.response?.data?.error ??
+          "Registration failed. Try again.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -52,7 +59,7 @@ export default function RegisterPage() {
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              "Joining CareerPilot was the best decision for my tech career. The roadmap generator is brilliant."
+              &ldquo;Joining CareerPilot was the best decision for my tech career. The roadmap generator is brilliant.&rdquo;
             </p>
             <footer className="text-sm">Alex Chen</footer>
           </blockquote>
