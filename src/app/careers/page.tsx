@@ -1,137 +1,136 @@
-"use client";
-
-import { useState } from "react";
-import { Input } from "@/components/ui/input";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import type { BadgeProps } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Search, MapPin, DollarSign, Star, SlidersHorizontal, X } from "lucide-react";
-import { motion } from "framer-motion";
-import Link from "next/link";
+import { Search, MapPin, DollarSign, Star, SlidersHorizontal } from "lucide-react";
+import { demandLabel, getCareers } from "@/lib/public-content";
 
-const CATEGORIES = ["All", "Technology", "Design", "Marketing", "Finance", "Healthcare", "Education"];
-
-type CareerCard = {
-  id: number;
-  title: string;
-  category: string;
-  salary: string;
-  demand: string;
-  rating: number;
-  location: string;
-  description: string;
+type CareersPageProps = {
+  searchParams: Promise<{
+    search?: string;
+    category?: string;
+  }>;
 };
 
-const CAREERS: CareerCard[] = [
-  { id: 1, title: "AI / ML Engineer", category: "Technology", salary: "$140k-$250k", demand: "Very High", rating: 4.9, location: "Remote", description: "Design and build machine learning models and AI systems at scale." },
-  { id: 2, title: "Full Stack Developer", category: "Technology", salary: "$110k-$180k", demand: "High", rating: 4.8, location: "Hybrid", description: "Develop end-to-end web applications with modern frameworks." },
-  { id: 3, title: "Product Manager", category: "Technology", salary: "$120k-$200k", demand: "High", rating: 4.7, location: "On-site", description: "Drive product vision, roadmap, and cross-functional execution." },
-  { id: 4, title: "UI/UX Designer", category: "Design", salary: "$90k-$150k", demand: "High", rating: 4.6, location: "Remote", description: "Craft intuitive, beautiful digital experiences backed by research." },
-  { id: 5, title: "Data Scientist", category: "Technology", salary: "$110k-$190k", demand: "High", rating: 4.8, location: "Remote", description: "Extract insights from complex datasets to inform business decisions." },
-  { id: 6, title: "DevOps Engineer", category: "Technology", salary: "$120k-$185k", demand: "High", rating: 4.7, location: "Hybrid", description: "Build and maintain robust CI/CD pipelines and cloud infrastructure." },
-  { id: 7, title: "Cybersecurity Analyst", category: "Technology", salary: "$100k-$160k", demand: "Very High", rating: 4.6, location: "On-site", description: "Protect organizational assets from digital threats and breaches." },
-  { id: 8, title: "Financial Analyst", category: "Finance", salary: "$80k-$130k", demand: "Steady", rating: 4.4, location: "Hybrid", description: "Analyze financial data and support investment and business decisions." },
-];
+const categories = ["All", "Technology", "Design", "Marketing", "Finance", "Healthcare", "Education"];
 
 const demandColor: Record<string, BadgeProps["variant"]> = {
-  "Very High": "success",
-  High: "premium",
+  "High Demand": "success",
+  Growing: "premium",
   Steady: "secondary",
 };
 
-export default function CareersPage() {
-  const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("All");
-
-  const filtered = CAREERS.filter((c) => {
-    const matchesSearch = c.title.toLowerCase().includes(search.toLowerCase());
-    const matchesCat = category === "All" || c.category === category;
-    return matchesSearch && matchesCat;
+export default async function CareersPage({ searchParams }: CareersPageProps) {
+  const { search, category } = await searchParams;
+  const careers = await getCareers({
+    search,
+    category: category && category !== "All" ? category : undefined,
+    limit: "20",
   });
 
   return (
-    <div className="container mx-auto px-4 py-12 space-y-8">
-      <div className="space-y-4">
-        <h1 className="text-4xl font-bold">Explore Career Paths</h1>
-        <p className="text-muted-foreground max-w-2xl">Discover high-growth roles, salary insights, and demand trends across industries. Find the perfect path for your ambitions.</p>
-      </div>
+    <div className="page-shell py-10">
+      <section className="section-wrap">
+        <div className="surface-panel hero-wash px-6 py-10 md:px-10 md:py-12">
+          <div className="max-w-3xl space-y-5">
+            <Badge variant="premium">Career explorer</Badge>
+            <h1 className="text-balance text-4xl font-semibold leading-tight md:text-5xl">
+              Explore roles with cleaner structure, better scanability, and a theme that stays legible.
+            </h1>
+            <p className="max-w-2xl text-base leading-7 text-muted-foreground md:text-lg">
+              Search by role, narrow by category, and review salary plus demand signals without losing the thread in either light or dark mode.
+            </p>
+          </div>
 
-      <div className="flex gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search careers..."
-            className="pl-10 h-12"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          {search && (
-            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-              <X className="h-4 w-4" />
+          <form action="/careers" className="mt-8 grid gap-3 md:grid-cols-[1fr_auto]">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input
+                name="search"
+                defaultValue={search}
+                placeholder="Search careers by title or direction"
+                className="flex h-12 w-full rounded-xl border border-border/70 bg-card/78 pl-11 pr-4 text-sm text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              />
+              {category && category !== "All" ? <input type="hidden" name="category" value={category} /> : null}
+            </div>
+            <button className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-border/70 bg-card/78 px-5 text-sm font-medium text-foreground transition-colors hover:border-primary/30 hover:bg-muted/70">
+              <SlidersHorizontal className="h-4 w-4" /> Search
             </button>
-          )}
+          </form>
         </div>
-        <Button variant="outline" className="h-12 gap-2">
-          <SlidersHorizontal className="h-4 w-4" /> Filters
-        </Button>
-      </div>
+      </section>
 
-      <div className="flex flex-wrap gap-2">
-        {CATEGORIES.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setCategory(cat)}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all ${
-              category === cat
-                ? "bg-primary text-primary-foreground border-primary"
-                : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
-            }`}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
+      <section className="section-wrap mt-8">
+        <div className="flex flex-wrap gap-2">
+          {categories.map((item) => {
+            const isActive = (category ?? "All") === item;
+            const href = item === "All"
+              ? `/careers${search ? `?search=${encodeURIComponent(search)}` : ""}`
+              : `/careers?category=${encodeURIComponent(item)}${search ? `&search=${encodeURIComponent(search)}` : ""}`;
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filtered.length === 0 && (
-          <div className="col-span-full text-center py-24 text-muted-foreground">
-            <Search className="h-12 w-12 mx-auto mb-4 opacity-30" />
-            <p className="text-lg font-medium">No careers found</p>
-            <p className="text-sm">Try adjusting your search or filters</p>
+            return (
+              <Link
+                key={item}
+                href={href}
+                className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${
+                  isActive ? "border-primary bg-primary text-primary-foreground" : "border-border/70 bg-card/72 text-muted-foreground hover:border-primary/30 hover:text-foreground"
+                }`}
+              >
+                {item}
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="section-wrap mt-8">
+        {careers.length === 0 ? (
+          <div className="surface-panel px-6 py-20 text-center text-muted-foreground">
+            <Search className="mx-auto mb-4 h-12 w-12 opacity-30" />
+            <p className="text-lg font-medium text-foreground">No careers found</p>
+            <p className="mt-2 text-sm">Try adjusting your search or category.</p>
+          </div>
+        ) : (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            {careers.map((career) => {
+              const demand = demandLabel(career.demandLevel);
+              return (
+                <Link key={career.id} href={`/careers/${career.id}`} className="block h-full">
+                  <Card className="h-full">
+                    <CardContent className="flex h-full flex-col gap-5 p-6">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h2 className="text-xl font-semibold leading-snug">{career.title}</h2>
+                          <p className="mt-2 text-sm text-muted-foreground">{career.category}</p>
+                        </div>
+                        <Badge variant={demandColor[demand]}>{demand}</Badge>
+                      </div>
+
+                      <p className="flex-1 text-sm leading-6 text-muted-foreground">{career.description}</p>
+
+                      <div className="grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
+                        <div className="surface-subtle px-4 py-3">
+                          <p className="flex items-center gap-2"><DollarSign className="h-4 w-4 text-accent" /> {career.salaryRange}</p>
+                        </div>
+                        <div className="surface-subtle px-4 py-3">
+                          <p className="flex items-center gap-2"><MapPin className="h-4 w-4" /> {career.location}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between border-t border-border/60 pt-4 text-sm">
+                        <div className="flex items-center gap-2 text-accent font-medium">
+                          <Star className="h-4 w-4 fill-accent" /> {career.rating.toFixed(1)} / 5.0
+                        </div>
+                        <span className="font-medium text-primary">View details</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         )}
-        {filtered.map((career, i) => (
-          <motion.div
-            key={career.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: i * 0.05 }}
-          >
-            <Link href={`/careers/${career.id}`} className="block h-full">
-              <Card className="h-full flex flex-col hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 bg-[var(--gradient-card)] border-border/50 hover:border-primary/40">
-                <CardContent className="p-6 flex flex-col gap-4 flex-1">
-                  <div className="flex justify-between items-start gap-2">
-                    <h2 className="font-bold text-lg leading-tight">{career.title}</h2>
-                    <Badge variant={demandColor[career.demand]} className="shrink-0 text-xs">{career.demand}</Badge>
-                  </div>
-                  <p className="text-sm text-muted-foreground flex-1">{career.description}</p>
-                  <div className="space-y-2 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2"><DollarSign className="h-3.5 w-3.5 text-accent" />{career.salary}</div>
-                    <div className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5" />{career.location}</div>
-                    <div className="flex items-center gap-2 text-accent font-medium">
-                      <Star className="h-3.5 w-3.5 fill-accent" /> {career.rating} / 5.0
-                    </div>
-                  </div>
-                  <div className="mt-auto text-center text-sm font-medium text-primary border border-primary/30 rounded-lg py-2 hover:bg-primary hover:text-primary-foreground transition-colors">
-                    View Details
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          </motion.div>
-        ))}
-      </div>
+      </section>
     </div>
   );
 }

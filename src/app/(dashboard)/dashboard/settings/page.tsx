@@ -28,9 +28,9 @@ export default function SettingsPage() {
 
   const { register, handleSubmit, formState: { errors } } = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
-    defaultValues: { 
-      name: user?.name ?? "", 
-      email: user?.email ?? "", 
+    defaultValues: {
+      name: user?.name ?? "",
+      email: user?.email ?? "",
       bio: "",
       skills: "React, TypeScript, Next.js",
       github: "",

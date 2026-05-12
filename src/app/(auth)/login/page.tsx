@@ -48,8 +48,8 @@ export default function LoginPage() {
       const err = error as AxiosError<{ message?: string; error?: string }>;
       setError(
         err.response?.data?.message ??
-          err.response?.data?.error ??
-          "Invalid credentials. Please try again.",
+        err.response?.data?.error ??
+        "Invalid credentials. Please try again.",
       );
     } finally {
       setIsLoading(false);
@@ -82,7 +82,7 @@ export default function LoginPage() {
               Enter your email below to log into your account
             </p>
           </div>
-          
+
           <GlassCard>
             <CardContent className="pt-6">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -117,7 +117,7 @@ export default function LoginPage() {
                   />
                   {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
                 </div>
-                
+
                 <Button className="w-full" type="submit" disabled={isLoading} variant="premium">
                   {isLoading ? "Signing in..." : (
                     <>

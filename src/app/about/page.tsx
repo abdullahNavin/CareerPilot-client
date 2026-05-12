@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import Link from "next/link";
 import { Target, Users, Zap, Globe } from "lucide-react";
 
@@ -12,78 +12,90 @@ const TEAM = [
 ];
 
 const VALUES = [
-  { icon: Target, title: "Career-First", desc: "Every feature we build is designed with one question in mind: does this help someone land a better job?" },
-  { icon: Zap, title: "AI-Powered Insights", desc: "We leverage the latest AI models to give you career advice that&apos;s actually personalized to you, not generic." },
-  { icon: Users, title: "Community-Driven", desc: "We learn from our users continuously. Your feedback shapes every sprint and release we ship." },
-  { icon: Globe, title: "Globally Accessible", desc: "Careers know no borders. We&apos;re building tools for professionals everywhere, in every industry." },
+  { icon: Target, title: "Career-first", desc: "We care about practical progress: stronger materials, better prep, clearer next steps." },
+  { icon: Zap, title: "Useful AI", desc: "The product should narrow decisions and reduce guesswork, not generate noise." },
+  { icon: Users, title: "Operator mindset", desc: "The interface is designed for repeated use by real job seekers, not one-time novelty." },
+  { icon: Globe, title: "Accessible ambition", desc: "High-quality career support should feel available, modern, and globally legible." },
 ];
 
 export default function AboutPage() {
   return (
-    <div className="container mx-auto px-4 py-16 space-y-24">
-      <div className="max-w-4xl mx-auto text-center space-y-8">
-        <Badge variant="premium">Our Mission</Badge>
-        <h1 className="text-5xl font-bold leading-tight">
-          Democratizing Career Intelligence with AI
-        </h1>
-        <p className="text-xl text-muted-foreground leading-relaxed">
-          CareerPilot AI was born from a simple belief: everyone deserves world-class career guidance, not just those who can afford expensive coaches. We&apos;re making that possible through technology.
-        </p>
-        <div className="flex justify-center gap-4">
-          <Button variant="premium" size="lg" asChild><Link href="/register">Start for Free</Link></Button>
-          <Button variant="outline" size="lg" asChild><Link href="/careers">Explore Careers</Link></Button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12 border-y border-border/50">
-        {[
-          { value: "50k+", label: "Active Users" },
-          { value: "120k+", label: "Resumes Analyzed" },
-          { value: "4.9/5", label: "Average Rating" },
-          { value: "94%", label: "Success Rate" },
-        ].map((s, i) => (
-          <div key={i} className="text-center">
-            <div className="text-4xl font-bold text-transparent bg-clip-text bg-[var(--gradient-gold)]">{s.value}</div>
-            <div className="text-sm text-muted-foreground mt-1">{s.label}</div>
+    <div className="page-shell py-10">
+      <section className="section-wrap">
+        <div className="surface-panel hero-wash px-6 py-10 md:px-10 md:py-12">
+          <div className="max-w-3xl space-y-5">
+            <Badge variant="premium">About CareerPilot</Badge>
+            <h1 className="text-balance text-4xl font-semibold leading-tight md:text-5xl">
+              We are building a calmer, more capable UI for career growth.
+            </h1>
+            <p className="max-w-2xl text-base leading-7 text-muted-foreground md:text-lg">
+              CareerPilot AI exists for people who want better signal while they write, prepare, and decide. The redesign leans into that: cleaner hierarchy, stronger theme support, and a more deliberate product feel.
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Button variant="premium" size="lg" asChild><Link href="/register">Start for free</Link></Button>
+              <Button variant="outline" size="lg" asChild><Link href="/careers">Explore careers</Link></Button>
+            </div>
           </div>
-        ))}
-      </div>
-
-      <section className="space-y-10">
-        <div className="text-center space-y-2">
-          <h2 className="text-3xl font-bold">What We Stand For</h2>
-          <p className="text-muted-foreground">The values that guide every product decision we make.</p>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {VALUES.map((v, i) => (
-            <GlassCard key={i} className="p-6 space-y-4">
-              <div className="bg-primary/10 w-12 h-12 rounded-lg flex items-center justify-center text-primary">
-                <v.icon size={24} />
-              </div>
-              <h3 className="text-lg font-bold">{v.title}</h3>
-              <p className="text-sm text-muted-foreground">{v.desc}</p>
-            </GlassCard>
+      </section>
+
+      <section className="section-wrap mt-8">
+        <div className="grid gap-4 md:grid-cols-4">
+          {[
+            { value: "50k+", label: "Active users" },
+            { value: "120k+", label: "Resumes analyzed" },
+            { value: "4.9/5", label: "Average rating" },
+            { value: "94%", label: "Success rate" },
+          ].map((item) => (
+            <div key={item.label} className="metric-tile">
+              <p className="text-3xl font-semibold bg-[var(--gradient-gold)] bg-clip-text text-transparent">{item.value}</p>
+              <p className="mt-2 text-sm text-muted-foreground">{item.label}</p>
+            </div>
           ))}
         </div>
       </section>
 
-      <section className="space-y-10">
-        <div className="text-center space-y-2">
-          <h2 className="text-3xl font-bold">Meet the Team</h2>
-          <p className="text-muted-foreground">The people building the future of career development.</p>
+      <section className="section-wrap mt-14">
+        <div className="space-y-4">
+          <Badge variant="outline">What we optimize for</Badge>
+          <h2 className="text-3xl font-semibold">The product values behind the UI</h2>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {TEAM.map((member, i) => (
-            <div key={i} className="text-center space-y-3 p-6 rounded-xl border border-border/50 hover:border-primary/40 transition-colors">
-              <div className="w-20 h-20 rounded-full bg-[var(--gradient-cta)] flex items-center justify-center text-white font-bold text-2xl mx-auto">
-                {member.initials}
-              </div>
-              <div>
-                <h3 className="font-bold">{member.name}</h3>
-                <p className="text-sm text-muted-foreground">{member.role}</p>
-              </div>
-            </div>
+
+        <div className="mt-8 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {VALUES.map((value) => (
+            <Card key={value.title}>
+              <CardContent className="p-6">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+                  <value.icon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-5 text-xl font-semibold">{value.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground">{value.desc}</p>
+              </CardContent>
+            </Card>
           ))}
+        </div>
+      </section>
+
+      <section className="section-wrap mt-14">
+        <div className="surface-panel p-6 md:p-8">
+          <div className="space-y-4">
+            <Badge variant="outline">People</Badge>
+            <h2 className="text-3xl font-semibold">Meet the team</h2>
+          </div>
+
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {TEAM.map((member) => (
+              <Card key={member.name} className="bg-card/82">
+                <CardContent className="p-6 text-center">
+                  <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[var(--gradient-cta)] text-2xl font-semibold text-white premium-outline">
+                    {member.initials}
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold">{member.name}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{member.role}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </section>
     </div>

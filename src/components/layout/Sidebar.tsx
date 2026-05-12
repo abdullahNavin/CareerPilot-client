@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Target, 
-  MessageSquare, 
+import {
+  LayoutDashboard,
+  FileText,
+  Target,
+  MessageSquare,
   Briefcase,
   Settings,
   LogOut,
@@ -52,8 +52,8 @@ export function Sidebar() {
   const navItems = user?.role === "admin"
     ? ADMIN_NAV
     : user?.role === "mentor"
-    ? MENTOR_NAV
-    : USER_NAV;
+      ? MENTOR_NAV
+      : USER_NAV;
 
   return (
     <aside className="w-64 flex-shrink-0 border-r border-border bg-card hidden md:flex flex-col h-[calc(100vh-4rem)] sticky top-16">
@@ -62,8 +62,8 @@ export function Sidebar() {
         <div className={cn(
           "text-xs font-semibold uppercase tracking-widest px-3 py-1.5 rounded-md w-fit",
           user?.role === "admin" ? "bg-destructive/10 text-destructive" :
-          user?.role === "mentor" ? "bg-[var(--color-accent-soft)] text-accent" :
-          "bg-primary/10 text-primary"
+            user?.role === "mentor" ? "bg-[var(--color-accent-soft)] text-accent" :
+              "bg-primary/10 text-primary"
         )}>
           {user?.role ?? "user"}
         </div>

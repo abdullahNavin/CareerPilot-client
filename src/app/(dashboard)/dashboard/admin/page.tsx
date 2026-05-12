@@ -2,17 +2,23 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { 
-  Users, FileText, TrendingUp, BarChart2, 
+import {
+  Users, FileText, TrendingUp, BarChart2,
   ShieldAlert, Trash2, Eye, CheckCircle
 } from "lucide-react";
 
-const USERS_DATA = [
-  { name: "Sarah Johnson", email: "sarah@example.com", role: "user", status: "Active", joined: "May 2, 2026" },
-  { name: "Marcus Lee", email: "marcus@example.com", role: "mentor", status: "Active", joined: "Apr 15, 2026" },
-  { name: "Priya Sharma", email: "priya@example.com", role: "user", status: "Inactive", joined: "Mar 28, 2026" },
-  { name: "James Turner", email: "james@example.com", role: "user", status: "Active", joined: "May 7, 2026" },
-];
+const USERS_DATA: Array<{
+  name: string;
+  email: string;
+  role: "user" | "mentor" | "admin";
+  status: "Active" | "Inactive";
+  joined: string;
+}> = [
+    { name: "Sarah Johnson", email: "sarah@example.com", role: "user", status: "Active", joined: "May 2, 2026" },
+    { name: "Marcus Lee", email: "marcus@example.com", role: "mentor", status: "Active", joined: "Apr 15, 2026" },
+    { name: "Priya Sharma", email: "priya@example.com", role: "user", status: "Inactive", joined: "Mar 28, 2026" },
+    { name: "James Turner", email: "james@example.com", role: "user", status: "Active", joined: "May 7, 2026" },
+  ];
 
 const PLATFORM_STATS = [
   { label: "Total Users", value: "52,841", change: "+12%", icon: Users },

@@ -40,11 +40,11 @@ export default function InterviewPracticePage() {
     setTimeout(() => {
       setIsTyping(false);
       setMessages(prev => [
-        ...prev, 
-        { 
-          id: (Date.now() + 1).toString(), 
-          role: "assistant", 
-          content: "That's a great role to aim for. Let's start with a behavioral question. Can you tell me about a time when you had to deal with a difficult team member or client? How did you handle the situation, and what was the outcome?" 
+        ...prev,
+        {
+          id: (Date.now() + 1).toString(),
+          role: "assistant",
+          content: "That's a great role to aim for. Let's start with a behavioral question. Can you tell me about a time when you had to deal with a difficult team member or client? How did you handle the situation, and what was the outcome?"
         }
       ]);
     }, 1500);
@@ -53,13 +53,13 @@ export default function InterviewPracticePage() {
   const toggleRecording = () => {
     setIsRecording(!isRecording);
     if (!isRecording) {
-       // simulate voice recording ending after some time
-       setTimeout(() => {
-         if (isRecording) {
-            setIsRecording(false);
-            setInput("I once worked with a developer who constantly missed deadlines...");
-         }
-       }, 3000);
+      // simulate voice recording ending after some time
+      setTimeout(() => {
+        if (isRecording) {
+          setIsRecording(false);
+          setInput("I once worked with a developer who constantly missed deadlines...");
+        }
+      }, 3000);
     }
   };
 
@@ -100,18 +100,17 @@ export default function InterviewPracticePage() {
         <GlassCard className="md:col-span-3 flex flex-col h-full overflow-hidden border-border/50">
           <div className="flex-1 overflow-y-auto p-6 space-y-6" ref={scrollRef}>
             {messages.map((msg) => (
-              <div 
-                key={msg.id} 
+              <div
+                key={msg.id}
                 className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
               >
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'assistant' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}`}>
                   {msg.role === 'assistant' ? <Bot size={18} /> : <User size={18} />}
                 </div>
-                <div className={`max-w-[80%] rounded-2xl px-5 py-3 text-sm ${
-                  msg.role === 'assistant' 
-                    ? 'bg-muted/50 border border-border text-foreground' 
+                <div className={`max-w-[80%] rounded-2xl px-5 py-3 text-sm ${msg.role === 'assistant'
+                    ? 'bg-muted/50 border border-border text-foreground'
                     : 'bg-primary text-primary-foreground'
-                }`}>
+                  }`}>
                   {msg.content}
                 </div>
               </div>
@@ -132,23 +131,23 @@ export default function InterviewPracticePage() {
 
           <div className="p-4 border-t border-border/50 bg-background/50 backdrop-blur-md">
             <div className="flex gap-2 items-end">
-              <Button 
-                variant={isRecording ? "destructive" : "outline"} 
-                size="icon" 
+              <Button
+                variant={isRecording ? "destructive" : "outline"}
+                size="icon"
                 className={`shrink-0 h-12 w-12 rounded-full ${isRecording ? 'animate-pulse' : ''}`}
                 onClick={toggleRecording}
               >
                 <Mic size={20} />
               </Button>
-              <Input 
-                placeholder="Type your response or click mic to speak..." 
+              <Input
+                placeholder="Type your response or click mic to speak..."
                 className="h-12 bg-background border-border/50 rounded-full px-6"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               />
-              <Button 
-                size="icon" 
+              <Button
+                size="icon"
                 className="shrink-0 h-12 w-12 rounded-full bg-[var(--gradient-cta)] hover:opacity-90 border-0"
                 onClick={handleSend}
                 disabled={!input.trim() || isTyping}

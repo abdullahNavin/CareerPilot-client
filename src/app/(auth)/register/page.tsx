@@ -41,8 +41,8 @@ export default function RegisterPage() {
       const err = error as AxiosError<{ message?: string; error?: string }>;
       setError(
         err.response?.data?.message ??
-          err.response?.data?.error ??
-          "Registration failed. Try again.",
+        err.response?.data?.error ??
+        "Registration failed. Try again.",
       );
     } finally {
       setIsLoading(false);
@@ -75,7 +75,7 @@ export default function RegisterPage() {
               Enter your details below to get started
             </p>
           </div>
-          
+
           <GlassCard>
             <CardContent className="pt-6">
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -84,7 +84,7 @@ export default function RegisterPage() {
                     {error}
                   </div>
                 )}
-                
+
                 <div className="space-y-2">
                   <label className="text-sm font-medium leading-none" htmlFor="name">Full Name</label>
                   <Input
@@ -129,7 +129,7 @@ export default function RegisterPage() {
                   />
                   {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword.message}</p>}
                 </div>
-                
+
                 <Button className="w-full" type="submit" disabled={isLoading} variant="premium">
                   {isLoading ? "Creating account..." : "Sign Up"}
                 </Button>
