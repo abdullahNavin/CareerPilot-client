@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, GlassCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { UploadCloud, FileText, CheckCircle2, AlertTriangle, Loader2 } from "lucide-react";
+import { UploadCloud, FileText, CheckCircle2, AlertTriangle, Loader2, Sparkles } from "lucide-react";
 
 type ResumeAnalysisResult = {
   score: number;
@@ -29,44 +29,67 @@ export default function ResumeAnalyzerPage() {
 
   const startAnalysis = () => {
     if (!file || !role) return;
-    
+
     setIsAnalyzing(true);
     setProgress(0);
     setResults(null);
 
-    // Simulate streaming progress
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           setIsAnalyzing(false);
-          // Mock results
           setResults({
             score: 78,
-            missingSkills: ["Docker", "GraphQL", "System Design"],
+            missingSkills: ["Docker", "GraphQL", "System design"],
             recommendations: [
-              "Add more quantifiable metrics to your last role (e.g., 'Increased revenue by X%').",
-              "Your summary section is too long. Keep it under 3 sentences.",
-              "Include keywords matching the target role: 'Agile', 'Microservices'."
+              "Add more quantifiable metrics to your latest role so impact is easier to scan.",
+              "Tighten the summary to two or three sentences with clearer positioning.",
+              "Mirror target-role keywords such as Agile, microservices, and collaboration."
             ],
-            formatting: "Good, but use standard bullet points."
+            formatting: "Strong overall. Standardize bullet formatting and shorten the longest sections."
           });
           return 100;
         }
-        return prev + Math.floor(Math.random() * 15) + 5;
+
+        return Math.min(prev + Math.floor(Math.random() * 15) + 5, 100);
       });
     }, 500);
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Resume Analyzer</h1>
-        <p className="text-muted-foreground">Upload your resume and get instant AI feedback against your target role.</p>
-      </div>
+    <div className="mx-auto max-w-6xl space-y-8">
+      <section className="surface-subtle relative overflow-hidden px-6 py-6 md:px-8">
+        <div className="hero-wash pointer-events-none absolute inset-0 opacity-90" />
+        <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl space-y-3">
+            <Badge variant="premium" className="gap-1.5 px-3 py-1.5">
+              <Sparkles className="h-3.5 w-3.5" />
+              AI-assisted review
+            </Badge>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Resume Analyzer</h1>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground md:text-base">
+                Upload a resume, set the target role, and get a clean review focused on ATS match, missing skills, and practical edits you can make next.
+              </p>
+            </div>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:w-[28rem]">
+            <div className="metric-tile">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Signals checked</p>
+              <p className="mt-3 text-lg font-semibold">Keywords, structure, clarity</p>
+              <p className="mt-1 text-sm text-muted-foreground">Useful for quick iteration before each application.</p>
+            </div>
+            <div className="metric-tile">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Fastest lift</p>
+              <p className="mt-3 text-lg font-semibold">Impact metrics</p>
+              <p className="mt-1 text-sm text-muted-foreground">Specific results usually move the score first.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        {/* Upload Section */}
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
         <Card className="h-fit">
           <CardHeader>
             <CardTitle>Configuration</CardTitle>
@@ -75,8 +98,8 @@ export default function ResumeAnalyzerPage() {
           <CardContent className="space-y-6">
             <div className="space-y-2">
               <label className="text-sm font-medium">Target Job Role</label>
-              <Input 
-                placeholder="e.g. Senior Frontend Engineer" 
+              <Input
+                placeholder="e.g. Senior Frontend Engineer"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 disabled={isAnalyzing}
@@ -84,26 +107,27 @@ export default function ResumeAnalyzerPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium">Upload Resume (PDF/DOCX)</label>
-              <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:bg-muted/50 transition-colors relative">
-                <input 
-                  type="file" 
-                  accept=".pdf,.docx" 
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+              <label className="text-sm font-medium">Upload Resume (PDF or DOCX)</label>
+              <div className="relative rounded-3xl border border-dashed border-border bg-muted/35 p-8 text-center transition-colors hover:bg-muted/55">
+                <input
+                  type="file"
+                  accept=".pdf,.docx"
+                  className="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
                   onChange={handleFileDrop}
                   disabled={isAnalyzing}
                 />
-                <div className="flex flex-col items-center gap-2">
-                  <div className="bg-primary/10 p-3 rounded-full text-primary">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                     <UploadCloud size={24} />
                   </div>
                   {file ? (
-                    <div className="font-medium text-sm text-primary flex items-center gap-2">
-                      <FileText size={16} /> {file.name}
+                    <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                      <FileText size={16} />
+                      {file.name}
                     </div>
                   ) : (
                     <>
-                      <p className="text-sm font-medium">Click or drag file to this area to upload</p>
+                      <p className="text-sm font-medium">Click or drag a file here to upload</p>
                       <p className="text-xs text-muted-foreground">PDF or DOCX up to 5MB</p>
                     </>
                   )}
@@ -111,70 +135,76 @@ export default function ResumeAnalyzerPage() {
               </div>
             </div>
 
-            <Button 
-              className="w-full" 
-              variant="premium" 
+            <Button
+              className="w-full"
+              variant="premium"
               size="lg"
               disabled={!file || !role || isAnalyzing}
               onClick={startAnalysis}
             >
               {isAnalyzing ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Analyzing...
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Analyzing...
                 </>
               ) : "Analyze Resume"}
             </Button>
           </CardContent>
         </Card>
 
-        {/* Results Section */}
         <div className="space-y-6">
           {isAnalyzing && (
-            <GlassCard className="p-8 text-center space-y-6 animate-in fade-in zoom-in duration-500">
-              <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
-                <svg className="w-full h-full transform -rotate-90">
-                  <circle cx="48" cy="48" r="45" className="stroke-muted fill-none stroke-[6]" />
-                  <circle 
-                    cx="48" cy="48" r="45" 
-                    className="stroke-primary fill-none stroke-[6] transition-all duration-300" 
-                    strokeDasharray="283" 
-                    strokeDashoffset={283 - (283 * progress) / 100} 
+            <GlassCard className="space-y-6 p-8 text-center">
+              <div className="relative mx-auto flex h-24 w-24 items-center justify-center">
+                <svg className="h-full w-full -rotate-90">
+                  <circle cx="48" cy="48" r="45" className="fill-none stroke-muted stroke-[6]" />
+                  <circle
+                    cx="48"
+                    cy="48"
+                    r="45"
+                    className="fill-none stroke-primary stroke-[6] transition-all duration-300"
+                    strokeDasharray="283"
+                    strokeDashoffset={283 - (283 * progress) / 100}
                   />
                 </svg>
-                <div className="absolute font-bold text-xl">{progress}%</div>
+                <div className="absolute text-xl font-bold">{progress}%</div>
               </div>
               <div>
-                <h3 className="font-semibold text-lg">AI is parsing your resume</h3>
-                <p className="text-sm text-muted-foreground">Checking keywords, impact metrics, and ATS compatibility...</p>
+                <h3 className="text-lg font-semibold">Review in progress</h3>
+                <p className="text-sm text-muted-foreground">Parsing keywords, structure, and ATS alignment for this role.</p>
               </div>
             </GlassCard>
           )}
 
           {results && !isAnalyzing && (
-            <div className="space-y-6 animate-in slide-in-from-bottom-4 fade-in duration-500">
-              <Card className="border-t-4 border-t-primary">
-                <CardContent className="pt-6 flex items-center justify-between">
+            <div className="space-y-6">
+              <Card className="overflow-hidden">
+                <div className="h-1 w-full bg-[var(--gradient-cta)]" />
+                <CardContent className="flex items-center justify-between gap-4 p-6">
                   <div>
                     <h3 className="text-xl font-bold">ATS Compatibility Score</h3>
-                    <p className="text-sm text-muted-foreground">Based on industry standards for {role}</p>
+                    <p className="text-sm text-muted-foreground">Measured against common expectations for {role}</p>
                   </div>
-                  <div className={`text-4xl font-bold ${results.score > 80 ? 'text-success' : 'text-warning'}`}>
+                  <div className={`text-4xl font-bold ${results.score > 80 ? "text-success" : "text-warning"}`}>
                     {results.score}%
                   </div>
                 </CardContent>
               </Card>
 
-              <div className="grid sm:grid-cols-2 gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4 text-warning" /> Missing Skills
+                    <CardTitle className="flex items-center gap-2 text-sm">
+                      <AlertTriangle className="h-4 w-4 text-warning" />
+                      Missing Skills
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
-                      {results.missingSkills.map((skill: string, i: number) => (
-                        <Badge key={i} variant="secondary" className="bg-warning/20 text-warning">{skill}</Badge>
+                      {results.missingSkills.map((skill) => (
+                        <Badge key={skill} variant="secondary" className="bg-warning/15 text-warning">
+                          {skill}
+                        </Badge>
                       ))}
                     </div>
                   </CardContent>
@@ -182,25 +212,26 @@ export default function ResumeAnalyzerPage() {
 
                 <Card>
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-primary" /> Formatting
+                    <CardTitle className="flex items-center gap-2 text-sm">
+                      <FileText className="h-4 w-4 text-primary" />
+                      Formatting
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-sm">{results.formatting}</p>
+                    <p className="text-sm text-muted-foreground">{results.formatting}</p>
                   </CardContent>
                 </Card>
               </div>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Key Recommendations</CardTitle>
+                  <CardTitle className="text-lg">Recommended Changes</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
-                    {results.recommendations.map((rec: string, i: number) => (
-                      <li key={i} className="flex gap-3 text-sm">
-                        <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
+                    {results.recommendations.map((rec) => (
+                      <li key={rec} className="flex gap-3 text-sm">
+                        <CheckCircle2 className="h-5 w-5 shrink-0 text-success" />
                         <span className="text-muted-foreground">{rec}</span>
                       </li>
                     ))}

@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, GlassCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Send, Bot, User, Mic, PlaySquare, StopCircle } from "lucide-react";
+import { Send, Bot, User, Mic, PlaySquare, StopCircle, Sparkles } from "lucide-react";
 
 type Message = {
   id: string;
@@ -15,7 +15,11 @@ type Message = {
 
 export default function InterviewPracticePage() {
   const [messages, setMessages] = useState<Message[]>([
-    { id: "1", role: "assistant", content: "Hi there! I'm your AI Interview Coach. To get started, please tell me what role you are interviewing for and whether you want a behavioral or technical mock interview." }
+    {
+      id: "1",
+      role: "assistant",
+      content: "Hi there. I am your AI interview coach. Tell me the role you are targeting and whether you want a behavioral or technical mock interview."
+    }
   ]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -32,123 +36,139 @@ export default function InterviewPracticePage() {
     if (!input.trim()) return;
 
     const newUserMsg: Message = { id: Date.now().toString(), role: "user", content: input };
-    setMessages(prev => [...prev, newUserMsg]);
+    setMessages((prev) => [...prev, newUserMsg]);
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI response
     setTimeout(() => {
       setIsTyping(false);
-      setMessages(prev => [
+      setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           role: "assistant",
-          content: "That's a great role to aim for. Let's start with a behavioral question. Can you tell me about a time when you had to deal with a difficult team member or client? How did you handle the situation, and what was the outcome?"
+          content: "Great choice. Let us start with a behavioral question: tell me about a time you had to handle a difficult teammate or stakeholder. What did you do, and what changed because of it?"
         }
       ]);
     }, 1500);
   };
 
   const toggleRecording = () => {
-    setIsRecording(!isRecording);
-    if (!isRecording) {
-      // simulate voice recording ending after some time
+    const nextRecording = !isRecording;
+    setIsRecording(nextRecording);
+
+    if (nextRecording) {
       setTimeout(() => {
-        if (isRecording) {
-          setIsRecording(false);
-          setInput("I once worked with a developer who constantly missed deadlines...");
-        }
+        setIsRecording(false);
+        setInput("I once worked with a developer who kept missing deadlines, so I reset the plan with smaller checkpoints and clearer ownership.");
       }, 3000);
     }
   };
 
   return (
-    <div className="h-[calc(100vh-8rem)] flex flex-col space-y-4 max-w-5xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Interview Practice</h1>
-        <p className="text-muted-foreground">Real-time mock interviews with context-aware AI feedback.</p>
-      </div>
-
-      <div className="grid md:grid-cols-4 gap-6 flex-1 min-h-0">
-        <div className="md:col-span-1 space-y-4 flex flex-col">
-          <Card className="flex-1">
-            <CardHeader>
-              <CardTitle className="text-lg">Session Info</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Status</p>
-                <Badge variant="success" className="animate-pulse">Active Session</Badge>
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm font-medium">Duration</p>
-                <p className="text-2xl font-bold font-mono">12:45</p>
-              </div>
-              <div className="pt-4 space-y-2 border-t border-border">
-                <Button variant="outline" className="w-full justify-start" size="sm">
-                  <PlaySquare className="mr-2 h-4 w-4" /> New Session
-                </Button>
-                <Button variant="destructive" className="w-full justify-start" size="sm">
-                  <StopCircle className="mr-2 h-4 w-4" /> End Interview
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+    <div className="mx-auto flex h-[calc(100vh-10rem)] max-w-6xl flex-col space-y-6">
+      <section className="surface-subtle relative overflow-hidden px-6 py-6 md:px-8">
+        <div className="hero-wash pointer-events-none absolute inset-0 opacity-90" />
+        <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl space-y-3">
+            <Badge variant="premium" className="gap-1.5 px-3 py-1.5">
+              <Sparkles className="h-3.5 w-3.5" />
+              Live practice
+            </Badge>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Interview Practice</h1>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground md:text-base">
+                Run mock interviews, answer in chat or with voice, and keep your practice loop close to the roles you are already pursuing.
+              </p>
+            </div>
+          </div>
+          <div className="metric-tile max-w-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Session quality</p>
+            <p className="mt-3 text-3xl font-semibold">Active</p>
+            <p className="mt-1 text-sm text-muted-foreground">Behavioral mode with instant follow-up questioning enabled.</p>
+          </div>
         </div>
+      </section>
 
-        <GlassCard className="md:col-span-3 flex flex-col h-full overflow-hidden border-border/50">
-          <div className="flex-1 overflow-y-auto p-6 space-y-6" ref={scrollRef}>
+      <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
+        <Card className="h-fit">
+          <CardHeader>
+            <CardTitle className="text-lg">Session Info</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Status</p>
+              <Badge variant="success" className="animate-pulse">Active Session</Badge>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Duration</p>
+              <p className="font-mono text-3xl font-bold">12:45</p>
+            </div>
+            <div className="space-y-2 border-t border-border/60 pt-4">
+              <Button variant="outline" className="w-full justify-start" size="sm">
+                <PlaySquare className="mr-2 h-4 w-4" />
+                New Session
+              </Button>
+              <Button variant="destructive" className="w-full justify-start" size="sm">
+                <StopCircle className="mr-2 h-4 w-4" />
+                End Interview
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        <GlassCard className="flex min-h-0 flex-col overflow-hidden border-border/50">
+          <div className="flex-1 space-y-6 overflow-y-auto p-6" ref={scrollRef}>
             {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
-              >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${msg.role === 'assistant' ? 'bg-primary text-primary-foreground' : 'bg-secondary text-secondary-foreground'}`}>
-                  {msg.role === 'assistant' ? <Bot size={18} /> : <User size={18} />}
+              <div key={msg.id} className={`flex gap-4 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
+                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${msg.role === "assistant" ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}`}>
+                  {msg.role === "assistant" ? <Bot size={18} /> : <User size={18} />}
                 </div>
-                <div className={`max-w-[80%] rounded-2xl px-5 py-3 text-sm ${msg.role === 'assistant'
-                    ? 'bg-muted/50 border border-border text-foreground'
-                    : 'bg-primary text-primary-foreground'
-                  }`}>
+                <div
+                  className={`max-w-[80%] rounded-[1.5rem] px-5 py-3 text-sm leading-6 ${msg.role === "assistant"
+                    ? "border border-border bg-card/75 text-foreground"
+                    : "bg-[var(--gradient-cta)] text-white"
+                    }`}
+                >
                   {msg.content}
                 </div>
               </div>
             ))}
+
             {isTyping && (
               <div className="flex gap-4">
-                <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center shrink-0">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
                   <Bot size={18} />
                 </div>
-                <div className="bg-muted/50 border border-border rounded-2xl px-5 py-4 flex gap-1 items-center">
-                  <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '0ms' }} />
-                  <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '150ms' }} />
-                  <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: '300ms' }} />
+                <div className="flex items-center gap-1 rounded-[1.5rem] border border-border bg-card/75 px-5 py-4">
+                  <div className="h-2 w-2 animate-bounce rounded-full bg-primary" style={{ animationDelay: "0ms" }} />
+                  <div className="h-2 w-2 animate-bounce rounded-full bg-primary" style={{ animationDelay: "150ms" }} />
+                  <div className="h-2 w-2 animate-bounce rounded-full bg-primary" style={{ animationDelay: "300ms" }} />
                 </div>
               </div>
             )}
           </div>
 
-          <div className="p-4 border-t border-border/50 bg-background/50 backdrop-blur-md">
-            <div className="flex gap-2 items-end">
+          <div className="border-t border-border/60 bg-background/40 p-4 backdrop-blur-md">
+            <div className="flex items-end gap-2">
               <Button
                 variant={isRecording ? "destructive" : "outline"}
                 size="icon"
-                className={`shrink-0 h-12 w-12 rounded-full ${isRecording ? 'animate-pulse' : ''}`}
+                className={`h-12 w-12 shrink-0 rounded-full ${isRecording ? "animate-pulse" : ""}`}
                 onClick={toggleRecording}
               >
                 <Mic size={20} />
               </Button>
               <Input
-                placeholder="Type your response or click mic to speak..."
-                className="h-12 bg-background border-border/50 rounded-full px-6"
+                placeholder="Type your response or use the mic..."
+                className="h-12 rounded-full border-border/60 bg-background px-6"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                onKeyDown={(e) => e.key === "Enter" && handleSend()}
               />
               <Button
                 size="icon"
-                className="shrink-0 h-12 w-12 rounded-full bg-[var(--gradient-cta)] hover:opacity-90 border-0"
+                className="h-12 w-12 shrink-0 rounded-full border-0 bg-[var(--gradient-cta)] hover:opacity-90"
                 onClick={handleSend}
                 disabled={!input.trim() || isTyping}
               >

@@ -10,13 +10,18 @@ export default function DashboardLayout({
 }) {
   return (
     <ProtectedRoute>
-      <div className="flex min-h-[calc(100vh-4rem)] bg-background">
-        <Sidebar />
-        <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          <div className="flex-1 overflow-y-auto p-4 md:p-8">
-            {children}
+      <div className="page-shell min-h-[calc(100vh-4rem)] bg-background">
+        <div className="section-wrap py-4 md:py-6">
+          <div className="flex min-h-[calc(100vh-7rem)] gap-4 lg:gap-6">
+            <Sidebar />
+            <main className="surface-panel relative flex min-w-0 flex-1 flex-col overflow-hidden">
+              <div className="hero-wash pointer-events-none absolute inset-x-0 top-0 h-40 opacity-80" />
+              <div className="relative flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+                {children}
+              </div>
+            </main>
           </div>
-        </main>
+        </div>
       </div>
     </ProtectedRoute>
   );
