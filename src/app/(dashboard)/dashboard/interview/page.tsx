@@ -45,7 +45,21 @@ export default function InterviewPracticePage() {
     setError("");
 
     try {
-      const response = await requestInterviewReply(userMessage);
+      const contextMessages = [...messages, newUserMsg]
+        .slice(-6)
+        .map((message) => `${message.role === "assistant" ? "Coach" : "Candidate"}: ${message.content}`)
+        .join("\n");
+
+      const response = await requestInterviewReply(
+        [
+          "You are running a live mock interview for a frontend developer role.",
+          "Continue the conversation naturally based on the transcript below.",
+          "Ask exactly one relevant next interview question or give brief coaching feedback when appropriate.",
+          "Transcript:",
+          contextMessages,
+        ].join("\n")
+      );
+
       setMessages((prev) => [
         ...prev,
         {

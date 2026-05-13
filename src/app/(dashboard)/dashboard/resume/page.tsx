@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, GlassCard } 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { requestResumeAnalysis, type AIResultPayload } from "@/lib/dashboard";
+import { extractResumeText } from "@/lib/resume-text";
 import { UploadCloud, FileText, CheckCircle2, Loader2, Sparkles } from "lucide-react";
 
 export default function ResumeAnalyzerPage() {
@@ -29,16 +30,27 @@ export default function ResumeAnalyzerPage() {
       setError("");
       setResults(null);
 
+      const resumeText = await extractResumeText(file);
+      if (!resumeText) {
+        setError("We could not extract readable text from this resume file.");
+        return;
+      }
+
       const prompt = [
         `Target role: ${role}.`,
         `Uploaded resume file name: ${file.name}.`,
+        `Resume excerpt: ${resumeText.slice(0, 12000)}.`,
         "Provide ATS-oriented resume feedback with a short summary, key details, and recommendations."
       ].join(" ");
 
       const response = await requestResumeAnalysis(prompt);
       setResults(response);
-    } catch {
-      setError("We could not run resume analysis right now.");
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "We could not run resume analysis right now."
+      );
     } finally {
       setIsAnalyzing(false);
     }
