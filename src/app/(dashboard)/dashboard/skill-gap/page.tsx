@@ -5,38 +5,38 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, GlassCard } 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { requestCareerRoadmap, type AIResultPayload } from "@/lib/dashboard";
-import { Target, Loader2, BookOpen, Sparkles, CheckCircle2 } from "lucide-react";
+import { requestSkillGapAnalysis, type AIResultPayload } from "@/lib/dashboard";
+import { TrendingUp, Loader2, Sparkles, CheckCircle2, Target } from "lucide-react";
 
-export default function CareerRoadmapPage() {
+export default function SkillGapPage() {
   const [currentSkills, setCurrentSkills] = useState("");
-  const [targetCareer, setTargetCareer] = useState("");
+  const [targetRole, setTargetRole] = useState("");
   const [experience, setExperience] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [roadmap, setRoadmap] = useState<AIResultPayload | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [result, setResult] = useState<AIResultPayload | null>(null);
   const [error, setError] = useState("");
 
-  const generateRoadmap = async () => {
-    if (!currentSkills || !targetCareer || !experience) return;
+  const handleAnalyze = async () => {
+    if (!currentSkills || !targetRole || !experience) return;
 
     try {
-      setIsGenerating(true);
+      setIsAnalyzing(true);
       setError("");
-      setRoadmap(null);
+      setResult(null);
 
       const prompt = [
-        `Target career: ${targetCareer}.`,
+        `Target role: ${targetRole}.`,
         `Current skills: ${currentSkills}.`,
         `Experience level: ${experience}.`,
-        "Generate a career roadmap with a summary, step details, and recommendations."
+        "Analyze the skill gap, summarize the biggest missing areas, list detailed findings, and provide recommendations."
       ].join(" ");
 
-      const response = await requestCareerRoadmap(prompt);
-      setRoadmap(response);
+      const response = await requestSkillGapAnalysis(prompt);
+      setResult(response);
     } catch {
-      setError("We could not generate a roadmap right now.");
+      setError("We could not run skill gap analysis right now.");
     } finally {
-      setIsGenerating(false);
+      setIsAnalyzing(false);
     }
   };
 
@@ -48,19 +48,19 @@ export default function CareerRoadmapPage() {
           <div className="max-w-2xl space-y-3">
             <Badge variant="premium" className="gap-1.5 px-3 py-1.5">
               <Sparkles className="h-3.5 w-3.5" />
-              Backend roadmap generation
+              Backend skill-gap analysis
             </Badge>
             <div>
-              <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Career Roadmap Generator</h1>
+              <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Skill Gap Analyzer</h1>
               <p className="mt-2 text-sm leading-6 text-muted-foreground md:text-base">
-                This generator now creates and saves roadmap results through the backend AI endpoint.
+                Compare your current skills with a target role using the real backend AI endpoint instead of a placeholder route.
               </p>
             </div>
           </div>
           <div className="metric-tile max-w-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Backend route</p>
-            <p className="mt-3 text-lg font-semibold">`/ai/career-roadmap`</p>
-            <p className="mt-1 text-sm text-muted-foreground">Each run becomes part of your stored AI history.</p>
+            <p className="mt-3 text-lg font-semibold">`/ai/skill-gap-analysis`</p>
+            <p className="mt-1 text-sm text-muted-foreground">Each run is stored with your backend AI results.</p>
           </div>
         </div>
       </section>
@@ -71,70 +71,70 @@ export default function CareerRoadmapPage() {
         </div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.2fr)]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)]">
         <Card className="h-fit">
           <CardHeader>
-            <CardTitle>Your Details</CardTitle>
-            <CardDescription>Tell the planner where you are right now.</CardDescription>
+            <CardTitle>Analysis Input</CardTitle>
+            <CardDescription>Describe your current baseline and the role you want to close the gap toward.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Target Career</label>
-              <Input placeholder="e.g. Full Stack Developer" value={targetCareer} onChange={(e) => setTargetCareer(e.target.value)} />
+              <label className="text-sm font-medium">Target Role</label>
+              <Input placeholder="e.g. Product Data Analyst" value={targetRole} onChange={(e) => setTargetRole(e.target.value)} />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Current Skills</label>
-              <Input placeholder="e.g. HTML, CSS, basic JavaScript" value={currentSkills} onChange={(e) => setCurrentSkills(e.target.value)} />
+              <Input placeholder="e.g. Excel, SQL basics, dashboarding" value={currentSkills} onChange={(e) => setCurrentSkills(e.target.value)} />
             </div>
             <div className="space-y-2">
               <label className="text-sm font-medium">Experience Level</label>
-              <Input placeholder="e.g. Entry level, 1 year" value={experience} onChange={(e) => setExperience(e.target.value)} />
+              <Input placeholder="e.g. 1 year in operations analytics" value={experience} onChange={(e) => setExperience(e.target.value)} />
             </div>
-            <Button className="mt-2 w-full" variant="premium" onClick={generateRoadmap} disabled={!targetCareer || !currentSkills || !experience || isGenerating}>
-              {isGenerating ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Generating...</> : "Generate Roadmap"}
+            <Button className="w-full" variant="premium" onClick={handleAnalyze} disabled={!currentSkills || !targetRole || !experience || isAnalyzing}>
+              {isAnalyzing ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Analyzing...</> : "Analyze Skill Gap"}
             </Button>
           </CardContent>
         </Card>
 
         <div className="min-w-0">
-          {!roadmap && !isGenerating && (
+          {!result && !isAnalyzing && (
             <div className="surface-subtle flex h-[420px] flex-col items-center justify-center p-8 text-center">
               <Target className="mb-4 h-16 w-16 text-muted-foreground/50" />
-              <h3 className="text-lg font-medium text-foreground">No roadmap generated yet</h3>
+              <h3 className="text-lg font-medium text-foreground">No analysis yet</h3>
               <p className="mt-2 max-w-md text-sm text-muted-foreground">
-                Fill out the details on the left and generate a live roadmap response from the backend.
+                Fill out the inputs and run a real skill-gap request against the backend AI service.
               </p>
             </div>
           )}
 
-          {isGenerating && (
+          {isAnalyzing && (
             <GlassCard className="flex h-[420px] flex-col items-center justify-center text-center">
               <Loader2 className="mb-4 h-12 w-12 animate-spin text-primary" />
-              <h3 className="text-lg font-medium">Building your roadmap</h3>
-              <p className="mt-2 text-sm text-muted-foreground">Waiting on the backend AI response.</p>
+              <h3 className="text-lg font-medium">Analyzing your gap</h3>
+              <p className="mt-2 text-sm text-muted-foreground">Waiting for the backend AI response.</p>
             </GlassCard>
           )}
 
-          {roadmap && !isGenerating && (
+          {result && !isAnalyzing && (
             <div className="space-y-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Summary</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground">{roadmap.summary ?? "No summary returned."}</p>
+                  <p className="text-sm text-muted-foreground">{result.summary ?? "No summary returned."}</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Key Steps</CardTitle>
+                  <CardTitle className="text-lg">Gap Details</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
-                    {(roadmap.details ?? []).map((detail) => (
+                    {(result.details ?? []).map((detail) => (
                       <li key={detail} className="flex gap-3 text-sm">
-                        <BookOpen className="h-5 w-5 shrink-0 text-primary" />
+                        <TrendingUp className="h-5 w-5 shrink-0 text-primary" />
                         <span className="text-muted-foreground">{detail}</span>
                       </li>
                     ))}
@@ -144,11 +144,11 @@ export default function CareerRoadmapPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Recommendations</CardTitle>
+                  <CardTitle className="text-lg">Recommended Next Steps</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
-                    {(roadmap.recommendations ?? []).map((item) => (
+                    {(result.recommendations ?? []).map((item) => (
                       <li key={item} className="flex gap-3 text-sm">
                         <CheckCircle2 className="h-5 w-5 shrink-0 text-success" />
                         <span className="text-muted-foreground">{item}</span>

@@ -44,7 +44,7 @@ const AI_TOOLS: ToolCard[] = [
     gradient: "from-violet-500/18 via-secondary/10 to-transparent",
   },
   {
-    href: "/dashboard/tracker",
+    href: "/dashboard/skill-gap",
     icon: TrendingUp,
     title: "Skill Gap Analyzer",
     description: "Compare your current profile against the expectations of your target path.",

@@ -1,21 +1,54 @@
 "use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Users, FileText, TrendingUp, BarChart2,
-  ShieldAlert, CheckCircle, ArrowRight
-} from "lucide-react";
-
-const PLATFORM_STATS = [
-  { label: "Total Users", value: "52,841", change: "+12%", icon: Users },
-  { label: "AI Requests (24h)", value: "18,203", change: "+5%", icon: TrendingUp },
-  { label: "Resumes Analyzed", value: "124,502", change: "+8%", icon: FileText },
-  { label: "Monthly Revenue", value: "$84,200", change: "+18%", icon: BarChart2 },
-];
+import { Skeleton } from "@/components/ui/skeleton";
+import { fetchAdminStats, type AdminStats } from "@/lib/dashboard";
+import { Users, FileText, TrendingUp, BarChart2, ShieldAlert, CheckCircle, ArrowRight } from "lucide-react";
 
 export default function AdminDashboardPage() {
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadStats() {
+      try {
+        setIsLoading(true);
+        const result = await fetchAdminStats();
+
+        if (!active) return;
+
+        setStats(result);
+      } catch {
+        if (!active) return;
+        setError("We could not load the admin dashboard stats.");
+      } finally {
+        if (active) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void loadStats();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const platformStats = stats ? [
+    { label: "Total Users", value: String(stats.totalUsers), change: `${stats.usersByRole.length} roles active`, icon: Users },
+    { label: "AI Requests", value: String(stats.totalAIRequests), change: "Saved backend AI outputs", icon: TrendingUp },
+    { label: "Published Blogs", value: String(stats.totalBlogs), change: "Visible public content", icon: FileText },
+    { label: "Tracked Jobs", value: String(stats.totalJobs), change: "User pipeline records", icon: BarChart2 },
+  ] : [];
+
   return (
     <div className="max-w-7xl space-y-8">
       <section className="surface-subtle relative overflow-hidden px-6 py-6 md:px-8">
@@ -29,41 +62,58 @@ export default function AdminDashboardPage() {
             <div>
               <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Admin Dashboard</h1>
               <p className="mt-2 text-sm leading-6 text-muted-foreground md:text-base">
-                Monitor platform health, user growth, and core moderation actions from one consistent control surface.
+                Platform-wide stats are now pulled directly from the backend admin endpoints.
               </p>
             </div>
           </div>
           <div className="metric-tile max-w-sm">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Platform state</p>
-            <p className="mt-3 text-3xl font-semibold">Healthy</p>
-            <p className="mt-1 text-sm text-muted-foreground">Usage is climbing while infrastructure and model services remain stable.</p>
+            <p className="mt-3 text-3xl font-semibold">{isLoading ? "Loading" : "Live"}</p>
+            <p className="mt-1 text-sm text-muted-foreground">This panel reflects current data rather than placeholder counts.</p>
           </div>
         </div>
       </section>
 
-      {/* Platform Stats */}
+      {error && (
+        <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          {error}
+        </div>
+      )}
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {PLATFORM_STATS.map((stat, i) => (
-          <Card key={i} className="overflow-hidden border-border/70 bg-card/80 backdrop-blur-xl">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-3">
-                <stat.icon className="h-5 w-5 text-primary" />
-                <Badge variant="success" className="text-xs">{stat.change}</Badge>
-              </div>
-              <p className="text-2xl font-bold">{stat.value}</p>
-              <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
-            </CardContent>
-          </Card>
-        ))}
+        {isLoading ? (
+          Array.from({ length: 4 }, (_, index) => (
+            <Card key={index} className="overflow-hidden border-border/70 bg-card/80 backdrop-blur-xl">
+              <CardContent className="pt-6">
+                <Skeleton className="h-5 w-24" />
+                <Skeleton className="mt-4 h-8 w-24" />
+                <Skeleton className="mt-3 h-4 w-32" />
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          platformStats.map((stat) => (
+            <Card key={stat.label} className="overflow-hidden border-border/70 bg-card/80 backdrop-blur-xl">
+              <CardContent className="pt-6">
+                <div className="mb-3 flex items-center justify-between">
+                  <stat.icon className="h-5 w-5 text-primary" />
+                  <Badge variant="success" className="text-xs">Live</Badge>
+                </div>
+                <p className="text-2xl font-bold">{stat.value}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{stat.label}</p>
+                <p className="mt-2 text-xs text-muted-foreground">{stat.change}</p>
+              </CardContent>
+            </Card>
+          ))
+        )}
       </div>
 
-      {/* User Management */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>User Management</CardTitle>
-              <CardDescription>Open the dedicated users workspace to manage roles, account states, and moderation actions.</CardDescription>
+              <CardDescription>Open the dedicated users workspace to manage real accounts from the backend.</CardDescription>
             </div>
             <Button asChild variant="premium" size="sm">
               <Link href="/dashboard/admin/users">
@@ -76,43 +126,39 @@ export default function AdminDashboardPage() {
         <CardContent>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="surface-subtle p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Active accounts</p>
-              <p className="mt-3 text-2xl font-semibold">49,102</p>
-              <p className="mt-1 text-sm text-muted-foreground">Healthy retention across user and mentor cohorts.</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Users by role</p>
+              <div className="mt-3 space-y-2">
+                {isLoading ? (
+                  <>
+                    <Skeleton className="h-4 w-28" />
+                    <Skeleton className="h-4 w-32" />
+                  </>
+                ) : (
+                  stats?.usersByRole.map((item) => (
+                    <div key={item.role} className="flex items-center justify-between text-sm">
+                      <span className="capitalize text-muted-foreground">{item.role.toLowerCase()}</span>
+                      <span className="font-semibold">{item.count}</span>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
             <div className="surface-subtle p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Pending reviews</p>
-              <p className="mt-3 text-2xl font-semibold">17</p>
-              <p className="mt-1 text-sm text-muted-foreground">Profile and moderation actions waiting for admin review.</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Careers available</p>
+              <p className="mt-3 text-2xl font-semibold">{isLoading ? "..." : stats?.totalCareers ?? 0}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Live total of career records in the system.</p>
             </div>
             <div className="surface-subtle p-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Role changes</p>
-              <p className="mt-3 text-2xl font-semibold">23 this week</p>
-              <p className="mt-1 text-sm text-muted-foreground">Mostly mentor approvals and internal access updates.</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Health check</p>
+              <div className="mt-3 flex items-center gap-2 text-success">
+                <CheckCircle className="h-5 w-5" />
+                <span className="font-semibold">Connected</span>
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">Admin frontend is receiving platform data from the API.</p>
             </div>
           </div>
         </CardContent>
       </Card>
-
-      {/* Platform Health */}
-      <div className="grid md:grid-cols-3 gap-4">
-        {[
-          { label: "API Uptime", value: "99.98%", status: "Healthy", icon: CheckCircle },
-          { label: "AI Model Status", value: "Operational", status: "Online", icon: CheckCircle },
-          { label: "Database", value: "Optimal", status: "Healthy", icon: CheckCircle },
-        ].map((item, i) => (
-          <Card key={i} className="border-success/20 bg-success/5">
-            <CardContent className="pt-6 flex items-center gap-4">
-              <item.icon className="h-8 w-8 text-success" />
-              <div>
-                <p className="font-bold">{item.value}</p>
-                <p className="text-sm text-muted-foreground">{item.label}</p>
-                <Badge variant="success" className="text-xs mt-1">{item.status}</Badge>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
     </div>
   );
 }

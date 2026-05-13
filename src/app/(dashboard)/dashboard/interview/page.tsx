@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, GlassCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { requestInterviewReply } from "@/lib/dashboard";
 import { Send, Bot, User, Mic, PlaySquare, StopCircle, Sparkles } from "lucide-react";
 
 type Message = {
@@ -24,6 +25,7 @@ export default function InterviewPracticePage() {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [error, setError] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -32,25 +34,31 @@ export default function InterviewPracticePage() {
     }
   }, [messages, isTyping]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!input.trim()) return;
 
-    const newUserMsg: Message = { id: Date.now().toString(), role: "user", content: input };
+    const userMessage = input;
+    const newUserMsg: Message = { id: Date.now().toString(), role: "user", content: userMessage };
     setMessages((prev) => [...prev, newUserMsg]);
     setInput("");
     setIsTyping(true);
+    setError("");
 
-    setTimeout(() => {
-      setIsTyping(false);
+    try {
+      const response = await requestInterviewReply(userMessage);
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           role: "assistant",
-          content: "Great choice. Let us start with a behavioral question: tell me about a time you had to handle a difficult teammate or stakeholder. What did you do, and what changed because of it?"
+          content: response.summary ?? response.recommendations?.[0] ?? "The interview service returned without a message."
         }
       ]);
-    }, 1500);
+    } catch {
+      setError("We could not reach the interview AI service.");
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const toggleRecording = () => {
@@ -73,22 +81,28 @@ export default function InterviewPracticePage() {
           <div className="max-w-2xl space-y-3">
             <Badge variant="premium" className="gap-1.5 px-3 py-1.5">
               <Sparkles className="h-3.5 w-3.5" />
-              Live practice
+              Backend interview chat
             </Badge>
             <div>
               <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Interview Practice</h1>
               <p className="mt-2 text-sm leading-6 text-muted-foreground md:text-base">
-                Run mock interviews, answer in chat or with voice, and keep your practice loop close to the roles you are already pursuing.
+                Messages now go through the backend interview endpoint so they also become part of your saved AI activity.
               </p>
             </div>
           </div>
           <div className="metric-tile max-w-sm">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Session quality</p>
-            <p className="mt-3 text-3xl font-semibold">Active</p>
-            <p className="mt-1 text-sm text-muted-foreground">Behavioral mode with instant follow-up questioning enabled.</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Chat route</p>
+            <p className="mt-3 text-3xl font-semibold">Live</p>
+            <p className="mt-1 text-sm text-muted-foreground">Connected to `/ai/interview-chat`.</p>
           </div>
         </div>
       </section>
+
+      {error && (
+        <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          {error}
+        </div>
+      )}
 
       <div className="grid min-h-0 flex-1 gap-6 lg:grid-cols-[18rem_minmax(0,1fr)]">
         <Card className="h-fit">
@@ -98,11 +112,11 @@ export default function InterviewPracticePage() {
           <CardContent className="space-y-5">
             <div className="space-y-2">
               <p className="text-sm font-medium">Status</p>
-              <Badge variant="success" className="animate-pulse">Active Session</Badge>
+              <Badge variant="success" className="animate-pulse">Connected</Badge>
             </div>
             <div className="space-y-2">
-              <p className="text-sm font-medium">Duration</p>
-              <p className="font-mono text-3xl font-bold">12:45</p>
+              <p className="text-sm font-medium">Messages</p>
+              <p className="font-mono text-3xl font-bold">{messages.length}</p>
             </div>
             <div className="space-y-2 border-t border-border/60 pt-4">
               <Button variant="outline" className="w-full justify-start" size="sm">
@@ -164,12 +178,12 @@ export default function InterviewPracticePage() {
                 className="h-12 rounded-full border-border/60 bg-background px-6"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSend()}
+                onKeyDown={(e) => e.key === "Enter" && void handleSend()}
               />
               <Button
                 size="icon"
                 className="bg-gradient-cta h-12 w-12 shrink-0 rounded-full border-0 hover:opacity-90"
-                onClick={handleSend}
+                onClick={() => void handleSend()}
                 disabled={!input.trim() || isTyping}
               >
                 <Send size={20} className="text-white" />

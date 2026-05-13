@@ -5,21 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, GlassCard } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { UploadCloud, FileText, CheckCircle2, AlertTriangle, Loader2, Sparkles } from "lucide-react";
-
-type ResumeAnalysisResult = {
-  score: number;
-  missingSkills: string[];
-  recommendations: string[];
-  formatting: string;
-};
+import { requestResumeAnalysis, type AIResultPayload } from "@/lib/dashboard";
+import { UploadCloud, FileText, CheckCircle2, Loader2, Sparkles } from "lucide-react";
 
 export default function ResumeAnalyzerPage() {
   const [file, setFile] = useState<File | null>(null);
   const [role, setRole] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [results, setResults] = useState<ResumeAnalysisResult | null>(null);
+  const [results, setResults] = useState<AIResultPayload | null>(null);
+  const [error, setError] = useState("");
 
   const handleFileDrop = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -27,34 +21,27 @@ export default function ResumeAnalyzerPage() {
     }
   };
 
-  const startAnalysis = () => {
+  const startAnalysis = async () => {
     if (!file || !role) return;
 
-    setIsAnalyzing(true);
-    setProgress(0);
-    setResults(null);
+    try {
+      setIsAnalyzing(true);
+      setError("");
+      setResults(null);
 
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsAnalyzing(false);
-          setResults({
-            score: 78,
-            missingSkills: ["Docker", "GraphQL", "System design"],
-            recommendations: [
-              "Add more quantifiable metrics to your latest role so impact is easier to scan.",
-              "Tighten the summary to two or three sentences with clearer positioning.",
-              "Mirror target-role keywords such as Agile, microservices, and collaboration."
-            ],
-            formatting: "Strong overall. Standardize bullet formatting and shorten the longest sections."
-          });
-          return 100;
-        }
+      const prompt = [
+        `Target role: ${role}.`,
+        `Uploaded resume file name: ${file.name}.`,
+        "Provide ATS-oriented resume feedback with a short summary, key details, and recommendations."
+      ].join(" ");
 
-        return Math.min(prev + Math.floor(Math.random() * 15) + 5, 100);
-      });
-    }, 500);
+      const response = await requestResumeAnalysis(prompt);
+      setResults(response);
+    } catch {
+      setError("We could not run resume analysis right now.");
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   return (
@@ -65,29 +52,35 @@ export default function ResumeAnalyzerPage() {
           <div className="max-w-2xl space-y-3">
             <Badge variant="premium" className="gap-1.5 px-3 py-1.5">
               <Sparkles className="h-3.5 w-3.5" />
-              AI-assisted review
+              Backend-connected analysis
             </Badge>
             <div>
               <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Resume Analyzer</h1>
               <p className="mt-2 text-sm leading-6 text-muted-foreground md:text-base">
-                Upload a resume, set the target role, and get a clean review focused on ATS match, missing skills, and practical edits you can make next.
+                This tool now sends a real request to the backend AI endpoint and stores the result for dashboard activity.
               </p>
             </div>
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:auto-rows-fr">
             <div className="metric-tile h-full">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Signals checked</p>
-              <p className="mt-3 text-lg font-semibold">Keywords, structure, clarity</p>
-              <p className="mt-1 text-sm text-muted-foreground">Useful for quick iteration before each application.</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Request source</p>
+              <p className="mt-3 text-lg font-semibold">API: `/ai/resume-analysis`</p>
+              <p className="mt-1 text-sm text-muted-foreground">Responses are saved to your backend AI history.</p>
             </div>
             <div className="metric-tile h-full">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Fastest lift</p>
-              <p className="mt-3 text-lg font-semibold">Impact metrics</p>
-              <p className="mt-1 text-sm text-muted-foreground">Specific results usually move the score first.</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Current input</p>
+              <p className="mt-3 text-lg font-semibold">{file?.name ?? "No file selected"}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{role ? `Targeting ${role}` : "Choose a target role to begin."}</p>
             </div>
           </div>
         </div>
       </section>
+
+      {error && (
+        <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          {error}
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
         <Card className="h-fit">
@@ -154,82 +147,49 @@ export default function ResumeAnalyzerPage() {
 
         <div className="space-y-6">
           {isAnalyzing && (
-            <GlassCard className="space-y-6 p-8 text-center">
-              <div className="relative mx-auto flex h-24 w-24 items-center justify-center">
-                <svg className="h-full w-full -rotate-90">
-                  <circle cx="48" cy="48" r="45" className="fill-none stroke-muted stroke-[6]" />
-                  <circle
-                    cx="48"
-                    cy="48"
-                    r="45"
-                    className="fill-none stroke-primary stroke-[6] transition-all duration-300"
-                    strokeDasharray="283"
-                    strokeDashoffset={283 - (283 * progress) / 100}
-                  />
-                </svg>
-                <div className="absolute text-xl font-bold">{progress}%</div>
-              </div>
+            <GlassCard className="space-y-4 p-8 text-center">
+              <Loader2 className="mx-auto h-10 w-10 animate-spin text-primary" />
               <div>
                 <h3 className="text-lg font-semibold">Review in progress</h3>
-                <p className="text-sm text-muted-foreground">Parsing keywords, structure, and ATS alignment for this role.</p>
+                <p className="text-sm text-muted-foreground">Sending your role context to the backend AI service.</p>
               </div>
             </GlassCard>
           )}
 
           {results && !isAnalyzing && (
             <div className="space-y-6">
-              <Card className="overflow-hidden">
-                <div className="bg-gradient-cta h-1 w-full" />
-                <CardContent className="flex items-center justify-between gap-4 p-6">
-                  <div>
-                    <h3 className="text-xl font-bold">ATS Compatibility Score</h3>
-                    <p className="text-sm text-muted-foreground">Measured against common expectations for {role}</p>
-                  </div>
-                  <div className={`text-4xl font-bold ${results.score > 80 ? "text-success" : "text-warning"}`}>
-                    {results.score}%
-                  </div>
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Summary</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">{results.summary ?? "No summary returned."}</p>
                 </CardContent>
               </Card>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2 text-sm">
-                      <AlertTriangle className="h-4 w-4 text-warning" />
-                      Missing Skills
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex flex-wrap gap-2">
-                      {results.missingSkills.map((skill) => (
-                        <Badge key={skill} variant="secondary" className="bg-warning/15 text-warning">
-                          {skill}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="flex items-center gap-2 text-sm">
-                      <FileText className="h-4 w-4 text-primary" />
-                      Formatting
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">{results.formatting}</p>
-                  </CardContent>
-                </Card>
-              </div>
-
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Recommended Changes</CardTitle>
+                  <CardTitle className="text-lg">Key Details</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3">
-                    {results.recommendations.map((rec) => (
+                    {(results.details ?? []).map((detail) => (
+                      <li key={detail} className="flex gap-3 text-sm">
+                        <FileText className="h-5 w-5 shrink-0 text-primary" />
+                        <span className="text-muted-foreground">{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg">Recommendations</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {(results.recommendations ?? []).map((rec) => (
                       <li key={rec} className="flex gap-3 text-sm">
                         <CheckCircle2 className="h-5 w-5 shrink-0 text-success" />
                         <span className="text-muted-foreground">{rec}</span>
