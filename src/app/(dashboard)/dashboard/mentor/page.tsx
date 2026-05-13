@@ -70,7 +70,7 @@ export default function MentorDashboardPage() {
           {mentorStudents.map((student) => (
             <div key={student.name} className="surface-subtle flex flex-col justify-between gap-4 p-4 sm:flex-row sm:items-center">
               <div className="flex items-center gap-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[image:var(--gradient-cta)] text-sm font-semibold text-white">
+                <div className="bg-gradient-cta flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-white">
                   {student.name[0]}
                 </div>
                 <div>

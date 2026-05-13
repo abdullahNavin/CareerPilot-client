@@ -48,7 +48,7 @@ export default function AboutPage() {
             { value: "94%", label: "Success rate" },
           ].map((item) => (
             <div key={item.label} className="metric-tile">
-              <p className="text-3xl font-semibold bg-[image:var(--gradient-accent)] bg-clip-text text-transparent">{item.value}</p>
+              <p className="text-gradient-gold text-3xl font-semibold">{item.value}</p>
               <p className="mt-2 text-sm text-muted-foreground">{item.label}</p>
             </div>
           ))}
@@ -87,7 +87,7 @@ export default function AboutPage() {
             {TEAM.map((member) => (
               <Card key={member.name} className="bg-card/82">
                 <CardContent className="p-6 text-center">
-                  <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-[image:var(--gradient-cta)] text-2xl font-semibold text-white premium-outline">
+                  <div className="bg-gradient-cta premium-outline mx-auto flex h-20 w-20 items-center justify-center rounded-full text-2xl font-semibold text-white">
                     {member.initials}
                   </div>
                   <h3 className="mt-4 text-lg font-semibold">{member.name}</h3>

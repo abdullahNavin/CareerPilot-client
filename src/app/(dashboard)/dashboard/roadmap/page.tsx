@@ -155,7 +155,7 @@ export default function CareerRoadmapPage() {
           {roadmap && !isGenerating && (
             <div className="space-y-6">
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="bg-[image:var(--gradient-cta)] bg-clip-text text-2xl font-bold text-transparent">
+                <h2 className="text-gradient-cta text-2xl font-bold">
                   {roadmap.title}
                 </h2>
                 <Badge variant="outline" className="w-fit border-primary/40 px-3 py-1 text-primary">

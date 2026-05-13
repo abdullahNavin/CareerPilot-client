@@ -33,14 +33,16 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
         <ArrowLeft className="h-4 w-4" /> Back to Blogs
       </Link>
 
-      <div className="space-y-5">
-        <Badge variant="secondary">{post.category}</Badge>
-        <h1 className="text-4xl font-bold leading-tight">{post.title}</h1>
-        <p className="text-xl text-muted-foreground">{excerpt(post.content, 220)}</p>
+      <div className="space-y-6 max-w-3xl">
+        <Badge variant="premium" className="px-3 py-1 text-sm">{post.category}</Badge>
+        <h1 className="text-balance text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl leading-tight text-foreground">
+          {post.title}
+        </h1>
+        <p className="text-xl text-muted-foreground leading-relaxed">{excerpt(post.content, 220)}</p>
 
         <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-border">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-[image:var(--gradient-cta)] flex items-center justify-center text-white font-bold text-sm">
+            <div className="bg-gradient-cta flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white">
               {post.user?.name?.[0] ?? "C"}
             </div>
             <div>

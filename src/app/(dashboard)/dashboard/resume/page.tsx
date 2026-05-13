@@ -179,7 +179,7 @@ export default function ResumeAnalyzerPage() {
           {results && !isAnalyzing && (
             <div className="space-y-6">
               <Card className="overflow-hidden">
-                <div className="h-1 w-full bg-[image:var(--gradient-cta)]" />
+                <div className="bg-gradient-cta h-1 w-full" />
                 <CardContent className="flex items-center justify-between gap-4 p-6">
                   <div>
                     <h3 className="text-xl font-bold">ATS Compatibility Score</h3>

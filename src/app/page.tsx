@@ -61,8 +61,8 @@ export default function Home() {
               </Badge>
 
               <div className="space-y-4">
-                <h1 className="max-w-3xl text-balance text-4xl font-semibold leading-tight sm:text-5xl lg:text-6xl">
-                  Career guidance that feels like a <span className="bg-[var(--gradient-cta)] bg-clip-text text-transparent">high-signal workspace</span>, not a motivational poster.
+                <h1 className="max-w-3xl text-balance text-4xl font-extrabold tracking-tight leading-tight sm:text-5xl lg:text-6xl lg:leading-[1.1]">
+                  Career guidance that feels like a <span className="text-gradient-cta pb-1">high-signal workspace</span>, not a motivational poster.
                 </h1>
                 <p className="max-w-2xl text-balance text-base leading-7 text-muted-foreground sm:text-lg">
                   CareerPilot AI helps you strengthen your resume, prepare for interviews, and plan your next move with tools that are structured enough for real progress in both dark and light mode.
@@ -118,7 +118,7 @@ export default function Home() {
                       <span className="font-semibold text-success">92 / 100</span>
                     </div>
                     <div className="mt-3 h-2 rounded-full bg-muted">
-                      <div className="h-2 w-[92%] rounded-full bg-[var(--gradient-cta)]" />
+                      <div className="bg-gradient-cta h-2 w-[92%] rounded-full" />
                     </div>
                   </div>
 
@@ -152,7 +152,7 @@ export default function Home() {
         <div className="grid gap-4 md:grid-cols-4">
           {metrics.map((metric) => (
             <div key={metric.label} className="metric-tile">
-              <p className="text-3xl font-semibold bg-[var(--gradient-gold)] bg-clip-text text-transparent">{metric.value}</p>
+              <p className="text-gradient-gold text-3xl font-semibold">{metric.value}</p>
               <p className="mt-2 text-sm text-muted-foreground">{metric.label}</p>
             </div>
           ))}

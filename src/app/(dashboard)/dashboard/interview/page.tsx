@@ -127,7 +127,7 @@ export default function InterviewPracticePage() {
                 <div
                   className={`max-w-[80%] rounded-[1.5rem] px-5 py-3 text-sm leading-6 ${msg.role === "assistant"
                     ? "border border-border bg-card/75 text-foreground"
-                    : "bg-[image:var(--gradient-cta)] text-white"
+                    : "bg-gradient-cta text-white"
                     }`}
                 >
                   {msg.content}
@@ -168,7 +168,7 @@ export default function InterviewPracticePage() {
               />
               <Button
                 size="icon"
-                className="h-12 w-12 shrink-0 rounded-full border-0 bg-[image:var(--gradient-cta)] hover:opacity-90"
+                className="bg-gradient-cta h-12 w-12 shrink-0 rounded-full border-0 hover:opacity-90"
                 onClick={handleSend}
                 disabled={!input.trim() || isTyping}
               >

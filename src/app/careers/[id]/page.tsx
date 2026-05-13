@@ -61,7 +61,7 @@ export default async function CareerDetailPage({ params }: CareerDetailPageProps
         <GlassCard className="p-6 space-y-5">
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Salary Range</p>
-            <p className="text-2xl font-bold text-transparent bg-clip-text bg-[image:var(--gradient-accent)]">{career.salaryRange}</p>
+            <p className="text-gradient-gold text-2xl font-bold">{career.salaryRange}</p>
           </div>
           <div>
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Market Outlook</p>

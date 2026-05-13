@@ -25,10 +25,24 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
+
+  const setDemoCredentials = (role: 'admin' | 'user' | 'mentor') => {
+    if (role === 'admin') {
+      setValue('email', 'admin@careerpilot.com');
+      setValue('password', 'admin12345qQ');
+    } else if (role === 'mentor') {
+      setValue('email', 'mentor@careerpilot.com');
+      setValue('password', 'mentor12345qQ');
+    } else if (role === 'user') {
+      setValue('email', 'user@careerpilot.com');
+      setValue('password', 'user12345qQ');
+    }
+  };
 
   const onSubmit = async (data: LoginInput) => {
     setIsLoading(true);
@@ -59,7 +73,7 @@ export default function LoginPage() {
   return (
     <div className="container relative flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0 min-h-[calc(100vh-14rem)]">
       <div className="relative hidden h-full flex-col bg-muted p-10 text-white lg:flex dark:border-r">
-        <div className="absolute inset-0 bg-[image:var(--gradient-card)]" />
+        <div className="bg-gradient-card absolute inset-0" />
         <div className="relative z-20 flex items-center text-lg font-medium">
           CareerPilot AI
         </div>
@@ -141,6 +155,15 @@ export default function LoginPage() {
               <Button variant="outline" type="button" className="w-full mt-6" disabled={isLoading}>
                 Google
               </Button>
+
+              <div className="mt-6 space-y-2">
+                <div className="text-xs text-center text-muted-foreground font-medium uppercase tracking-wider">Demo Accounts</div>
+                <div className="flex gap-2">
+                  <Button variant="secondary" size="sm" type="button" className="flex-1 text-xs" onClick={() => setDemoCredentials('admin')}>Admin</Button>
+                  <Button variant="secondary" size="sm" type="button" className="flex-1 text-xs" onClick={() => setDemoCredentials('mentor')}>Mentor</Button>
+                  <Button variant="secondary" size="sm" type="button" className="flex-1 text-xs" onClick={() => setDemoCredentials('user')}>User</Button>
+                </div>
+              </div>
             </CardContent>
           </GlassCard>
 

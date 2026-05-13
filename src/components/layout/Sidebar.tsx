@@ -61,7 +61,7 @@ export function Sidebar() {
 
       <div className="relative border-b border-border/60 px-5 py-5">
         <div className="mb-4 flex items-start gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[image:var(--gradient-cta)] text-base font-semibold text-white shadow-[0_12px_30px_var(--color-primary-glow)]">
+          <div className="bg-gradient-cta flex h-12 w-12 items-center justify-center rounded-2xl text-base font-semibold text-white shadow-[0_12px_30px_var(--color-primary-glow)]">
             {user?.name?.[0] ?? "U"}
           </div>
           <div className="min-w-0">
@@ -73,7 +73,7 @@ export function Sidebar() {
         <div className={cn(
           "w-fit rounded-full px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.22em]",
           user?.role === "admin" ? "bg-destructive/10 text-destructive" :
-            user?.role === "mentor" ? "bg-[var(--color-accent-soft)] text-accent" :
+            user?.role === "mentor" ? "bg-accent-soft text-accent-strong" :
               "bg-primary/10 text-primary"
         )}>
           {user?.role ?? "user"}
@@ -91,7 +91,7 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-2xl px-3.5 py-3 text-sm font-medium transition-all",
                 isActive
-                  ? "bg-[image:var(--gradient-cta)] text-white shadow-[0_16px_40px_var(--color-primary-glow)]"
+                  ? "bg-gradient-cta text-white shadow-[0_16px_40px_var(--color-primary-glow)]"
                   : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
               )}
             >

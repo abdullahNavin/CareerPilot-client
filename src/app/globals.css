@@ -164,6 +164,48 @@
     background-image: var(--gradient-hero);
   }
 
+  .bg-gradient-card {
+    background-image: var(--gradient-card);
+  }
+
+  .bg-gradient-cta {
+    background-image: var(--gradient-cta);
+  }
+
+  .bg-gradient-gold {
+    background-image: var(--gradient-gold);
+  }
+
+  .bg-accent-soft {
+    background-color: var(--accent-soft);
+  }
+
+  .bg-success-solid {
+    background-color: var(--color-success);
+  }
+
+  .bg-warning-solid {
+    background-color: var(--color-warning);
+  }
+
+  .text-accent-strong {
+    color: var(--accent);
+  }
+
+  .text-gradient-cta {
+    background-image: var(--gradient-cta);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-gold {
+    background-image: var(--gradient-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
   .premium-outline {
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 20px 60px var(--primary-glow);
   }

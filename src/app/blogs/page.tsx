@@ -46,7 +46,7 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
         <div className="grid md:grid-cols-3 gap-6">
           {featured.map((post) => (
             <Link key={post.id} href={`/blogs/${post.slug}`} className="block h-full">
-              <Card className="h-full flex flex-col hover:-translate-y-1 transition-all duration-300 bg-[image:var(--gradient-card)] border-border/50 hover:border-primary/40">
+              <Card className="bg-gradient-card h-full flex-col border-border/50 transition-all duration-300 hover:-translate-y-1 hover:border-primary/40">
                 <CardHeader>
                   <Badge variant="secondary" className="w-fit mb-2">{post.category}</Badge>
                   <CardTitle className="text-lg leading-snug">{post.title}</CardTitle>

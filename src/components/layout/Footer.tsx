@@ -35,7 +35,7 @@ export function Footer() {
         <div className="grid gap-0 lg:grid-cols-[1.15fr_1.85fr]">
           <div className="hero-wash border-b border-border/70 p-8 lg:border-b-0 lg:border-r">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[image:var(--gradient-cta)] text-white premium-outline">
+              <div className="bg-gradient-cta premium-outline flex h-11 w-11 items-center justify-center rounded-2xl text-white">
                 <BrainCircuit className="h-5 w-5" />
               </div>
               <div>
