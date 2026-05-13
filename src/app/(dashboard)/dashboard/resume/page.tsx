@@ -61,7 +61,7 @@ export default function ResumeAnalyzerPage() {
     <div className="mx-auto max-w-6xl space-y-8">
       <section className="surface-subtle relative overflow-hidden px-6 py-6 md:px-8">
         <div className="hero-wash pointer-events-none absolute inset-0 opacity-90" />
-        <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+        <div className="relative grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(22rem,28rem)] lg:items-start">
           <div className="max-w-2xl space-y-3">
             <Badge variant="premium" className="gap-1.5 px-3 py-1.5">
               <Sparkles className="h-3.5 w-3.5" />
@@ -74,13 +74,13 @@ export default function ResumeAnalyzerPage() {
               </p>
             </div>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:w-[28rem]">
-            <div className="metric-tile">
+          <div className="grid gap-3 sm:grid-cols-2 lg:auto-rows-fr">
+            <div className="metric-tile h-full">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Signals checked</p>
               <p className="mt-3 text-lg font-semibold">Keywords, structure, clarity</p>
               <p className="mt-1 text-sm text-muted-foreground">Useful for quick iteration before each application.</p>
             </div>
-            <div className="metric-tile">
+            <div className="metric-tile h-full">
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Fastest lift</p>
               <p className="mt-3 text-lg font-semibold">Impact metrics</p>
               <p className="mt-1 text-sm text-muted-foreground">Specific results usually move the score first.</p>
