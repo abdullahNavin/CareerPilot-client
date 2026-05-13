@@ -61,7 +61,7 @@ export function Sidebar() {
 
       <div className="relative border-b border-border/60 px-5 py-5">
         <div className="mb-4 flex items-start gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--gradient-cta)] text-base font-semibold text-white shadow-[0_12px_30px_var(--color-primary-glow)]">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[image:var(--gradient-cta)] text-base font-semibold text-white shadow-[0_12px_30px_var(--color-primary-glow)]">
             {user?.name?.[0] ?? "U"}
           </div>
           <div className="min-w-0">
@@ -91,7 +91,7 @@ export function Sidebar() {
               className={cn(
                 "flex items-center gap-3 rounded-2xl px-3.5 py-3 text-sm font-medium transition-all",
                 isActive
-                  ? "bg-[var(--gradient-cta)] text-white shadow-[0_16px_40px_var(--color-primary-glow)]"
+                  ? "bg-[image:var(--gradient-cta)] text-white shadow-[0_16px_40px_var(--color-primary-glow)]"
                   : "text-muted-foreground hover:bg-muted/70 hover:text-foreground"
               )}
             >

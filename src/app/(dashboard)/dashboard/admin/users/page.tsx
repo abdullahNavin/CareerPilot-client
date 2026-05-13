@@ -91,7 +91,7 @@ export default function AdminUsersPage() {
                   <tr key={user.email} className="transition-colors hover:bg-muted/30">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--gradient-cta)] text-xs font-bold text-white">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[image:var(--gradient-cta)] text-xs font-bold text-white">
                           {user.name[0]}
                         </div>
                         <div>

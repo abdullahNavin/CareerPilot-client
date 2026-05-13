@@ -40,7 +40,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
         <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-border">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 rounded-full bg-[var(--gradient-cta)] flex items-center justify-center text-white font-bold text-sm">
+            <div className="w-10 h-10 rounded-full bg-[image:var(--gradient-cta)] flex items-center justify-center text-white font-bold text-sm">
               {post.user?.name?.[0] ?? "C"}
             </div>
             <div>

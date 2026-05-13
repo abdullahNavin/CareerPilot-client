@@ -106,7 +106,7 @@ export default function SettingsPage() {
               <form onSubmit={handleSubmit(onSave)} className="space-y-5">
                 <div className="flex flex-col gap-5 border-b border-border/60 pb-6 sm:flex-row sm:items-center">
                   <div className="relative">
-                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[var(--gradient-cta)] text-2xl font-bold text-white">
+                    <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[image:var(--gradient-cta)] text-2xl font-bold text-white">
                       {user?.name?.[0] ?? "U"}
                     </div>
                   </div>

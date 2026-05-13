@@ -70,7 +70,7 @@ export function Navbar() {
           )}
         >
           <Link href="/" className="flex items-center gap-3 shrink-0">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--gradient-cta)] text-white premium-outline">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[image:var(--gradient-cta)] text-white premium-outline">
               <BrainCircuit className="h-5 w-5" />
             </div>
             <div className="leading-none">
@@ -130,7 +130,7 @@ export function Navbar() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="flex items-center gap-3 rounded-full border border-border/70 bg-card/75 px-2 py-1.5 transition-all hover:border-primary/30 hover:bg-muted/80">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--gradient-cta)] text-sm font-semibold text-white">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[image:var(--gradient-cta)] text-sm font-semibold text-white">
                       {user?.name?.[0] ?? "U"}
                     </div>
                     <div className="text-left">
@@ -204,7 +204,7 @@ export function Navbar() {
               ) : (
                 <div className="space-y-3">
                   <div className="flex items-center gap-3 rounded-xl bg-muted/50 px-3 py-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--gradient-cta)] text-sm font-semibold text-white">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[image:var(--gradient-cta)] text-sm font-semibold text-white">
                       {user?.name?.[0] ?? "U"}
                     </div>
                     <div>
