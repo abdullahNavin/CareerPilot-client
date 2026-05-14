@@ -17,6 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { NotificationDropdown } from "@/components/layout/NotificationDropdown";
 
 const PUBLIC_LINKS = [
   { href: "/", label: "Home" },
@@ -127,37 +128,40 @@ export function Navbar() {
                 </Button>
               </>
             ) : (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="flex items-center gap-3 rounded-full border border-border/70 bg-card/75 px-2 py-1.5 transition-all hover:border-primary/30 hover:bg-muted/80">
-                    <div className="bg-gradient-cta flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold text-white">
-                      {user?.name?.[0] ?? "U"}
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-medium leading-none">{user?.name?.split(" ")[0] ?? "User"}</p>
-                      <p className="text-[11px] text-muted-foreground mt-1 capitalize">{user?.role ?? "user"}</p>
-                    </div>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-60 rounded-2xl border-border/70 bg-popover/95 backdrop-blur-xl">
-                  <DropdownMenuLabel>
-                    <div className="font-medium text-foreground">{user?.name}</div>
-                    <div className="text-xs text-muted-foreground font-normal normal-case">{user?.email}</div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => router.push("/dashboard")}>
-                    <LayoutDashboard className="h-4 w-4" /> Dashboard
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => router.push("/dashboard/settings")}>
-                    <Settings className="h-4 w-4" /> Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={handleLogout}>
-                    <LogOut className="h-4 w-4" /> Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <>
+                <NotificationDropdown />
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-3 rounded-full border border-border/70 bg-card/75 px-2 py-1.5 transition-all hover:border-primary/30 hover:bg-muted/80">
+                      <div className="bg-gradient-cta flex h-9 w-9 items-center justify-center rounded-full text-sm font-semibold text-white">
+                        {user?.name?.[0] ?? "U"}
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-medium leading-none">{user?.name?.split(" ")[0] ?? "User"}</p>
+                        <p className="text-[11px] text-muted-foreground mt-1 capitalize">{user?.role ?? "user"}</p>
+                      </div>
+                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-60 rounded-2xl border-border/70 bg-popover/95 backdrop-blur-xl">
+                    <DropdownMenuLabel>
+                      <div className="font-medium text-foreground">{user?.name}</div>
+                      <div className="text-xs text-muted-foreground font-normal normal-case">{user?.email}</div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => router.push("/dashboard")}>
+                      <LayoutDashboard className="h-4 w-4" /> Dashboard
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => router.push("/dashboard/settings")}>
+                      <Settings className="h-4 w-4" /> Settings
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem className="text-destructive focus:text-destructive" onClick={handleLogout}>
+                      <LogOut className="h-4 w-4" /> Logout
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
             )}
           </div>
 

@@ -15,7 +15,10 @@ import {
   BarChart2,
   BookOpen,
   Star,
-  ShieldAlert,
+  Bell,
+  Flag,
+  LifeBuoy,
+  LineChart,
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 
@@ -37,12 +40,17 @@ const MENTOR_NAV = [
 ];
 
 const ADMIN_NAV = [
-  { href: "/dashboard/admin", icon: ShieldAlert, label: "Admin Panel" },
-  { href: "/dashboard/admin/users", icon: Users, label: "Users" },
-  { href: "/dashboard/mentor", icon: Star, label: "Mentors" },
-  { href: "/blogs", icon: BookOpen, label: "Blogs" },
-  { href: "/dashboard/roadmap", icon: BarChart2, label: "AI Analytics" },
-  { href: "/dashboard/settings", icon: Settings, label: "Settings" },
+  { href: "/dashboard/admin", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/dashboard/admin/users", icon: Users, label: "User Management" },
+  { href: "/dashboard/admin/mentors", icon: Star, label: "Mentor Management" },
+  { href: "/dashboard/admin/careers", icon: Briefcase, label: "Careers" },
+  { href: "/dashboard/admin/blogs", icon: BookOpen, label: "Blogs" },
+  { href: "/dashboard/admin/ai-analytics", icon: BarChart2, label: "AI Analytics" },
+  { href: "/dashboard/admin/reports", icon: Flag, label: "Reports" },
+  { href: "/dashboard/admin/notifications", icon: Bell, label: "Notifications" },
+  { href: "/dashboard/admin/platform-metrics", icon: LineChart, label: "Platform Metrics" },
+  { href: "/dashboard/admin/support", icon: LifeBuoy, label: "Support Center" },
+  { href: "/dashboard/admin/settings", icon: Settings, label: "Settings" },
 ];
 
 export function Sidebar() {
@@ -82,7 +90,7 @@ export function Sidebar() {
 
       <nav className="relative flex-1 space-y-1 overflow-y-auto p-4">
         {navItems.map((item, index) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || (item.href !== "/dashboard/admin" && pathname.startsWith(`${item.href}/`));
 
           return (
             <Link

@@ -1,135 +1,194 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
+import { Eye, PencilLine, ShieldAlert, Trash2, UserCog, UserX } from "lucide-react";
+
+import { AdminHeader, AdminStatCard, EmptyState } from "@/components/admin/AdminUI";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchAdminUsers, formatDateLabel, type AdminUser } from "@/lib/dashboard";
-import { Users, ShieldAlert, Eye, Trash2, UserCheck } from "lucide-react";
+import {
+  changeAdminUserRole,
+  deleteAdminUser,
+  fetchAdminUsers,
+  suspendAdminUser,
+  updateAdminUser,
+  type AdminUser,
+  type UserStatus,
+} from "@/lib/admin";
+
+const roleChoices = ["USER", "MENTOR", "ADMIN"] as const;
+const statusChoices: UserStatus[] = ["ACTIVE", "SUSPENDED", "PENDING"];
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
+  const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
+  const [draft, setDraft] = useState({ name: "", email: "", status: "ACTIVE" as UserStatus, role: "USER" as typeof roleChoices[number] });
+
+  async function loadUsers(search = query) {
+    try {
+      setIsLoading(true);
+      const result = await fetchAdminUsers(search ? { search } : undefined);
+      setUsers(result.data);
+      setError("");
+    } catch {
+      setError("We could not load the user management table.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   useEffect(() => {
     let active = true;
-
-    async function loadUsers() {
+    void (async () => {
       try {
         setIsLoading(true);
-        const result = await fetchAdminUsers({ limit: 20 });
-
+        const result = await fetchAdminUsers();
         if (!active) return;
-
         setUsers(result.data);
+        setError("");
       } catch {
         if (!active) return;
-        setError("We could not load the admin users list.");
+        setError("We could not load the user management table.");
       } finally {
-        if (active) {
-          setIsLoading(false);
-        }
+        if (active) setIsLoading(false);
       }
-    }
-
-    void loadUsers();
-
+    })();
     return () => {
       active = false;
     };
   }, []);
 
-  const roleColor = { user: "secondary", mentor: "premium", admin: "success" } as const;
+  const metrics = useMemo(() => ({
+    total: users.length,
+    suspended: users.filter((user) => user.status === "SUSPENDED").length,
+    admins: users.filter((user) => user.role === "admin").length,
+    mentors: users.filter((user) => user.role === "mentor").length,
+  }), [users]);
+
+  function openEdit(user: AdminUser) {
+    setEditingUser(user);
+    setDraft({
+      name: user.name,
+      email: user.email,
+      status: user.status,
+      role: (user.role.toUpperCase() as typeof roleChoices[number]),
+    });
+  }
+
+  async function handleSave() {
+    if (!editingUser) return;
+    try {
+      await updateAdminUser(editingUser.id, {
+        name: draft.name,
+        email: draft.email,
+        status: draft.status,
+      });
+      await changeAdminUserRole(editingUser.id, draft.role);
+      await loadUsers();
+      setEditingUser(null);
+    } catch {
+      setError("We could not save the user changes.");
+    }
+  }
+
+  async function handleSuspend(user: AdminUser) {
+    try {
+      await suspendAdminUser(user.id, user.status !== "SUSPENDED");
+      await loadUsers();
+    } catch {
+      setError("We could not update the user status.");
+    }
+  }
+
+  async function handleDelete(user: AdminUser) {
+    try {
+      await deleteAdminUser(user.id);
+      await loadUsers();
+    } catch {
+      setError("We could not delete this user.");
+    }
+  }
 
   return (
-    <ProtectedRoute allowedRoles={["admin"]}>
-      <div className="max-w-7xl space-y-8">
-        <section className="surface-subtle relative overflow-hidden px-6 py-6 md:px-8">
-          <div className="hero-wash pointer-events-none absolute inset-0 opacity-90" />
-          <div className="relative flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-2xl space-y-3">
-              <Badge variant="destructive" className="gap-1.5 px-3 py-1.5">
-                <ShieldAlert className="h-3.5 w-3.5" />
-                User administration
-              </Badge>
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Users</h1>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground md:text-base">
-                  This list now comes from the backend admin users endpoint, including role and creation date.
-                </p>
-              </div>
-            </div>
-            <div className="metric-tile max-w-sm">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Loaded records</p>
-              <p className="mt-3 text-3xl font-semibold">{isLoading ? "..." : users.length}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Current page of user data fetched from the API.</p>
-            </div>
-          </div>
-        </section>
+    <div className="space-y-8">
+      <AdminHeader
+        eyebrow="User management"
+        title="Users"
+        description="Review accounts, inspect who is active, change roles, suspend access, and keep the user base healthy."
+        icon={UserCog}
+        aside={
+          <>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Loaded users</p>
+            <p className="mt-3 text-3xl font-semibold">{isLoading ? "..." : users.length}</p>
+            <p className="mt-1 text-sm text-muted-foreground">Current page of backend-backed account records.</p>
+          </>
+        }
+      />
 
-        {error && (
-          <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">
-            {error}
-          </div>
-        )}
+      {error ? <div className="rounded-2xl border border-destructive/20 bg-destructive/5 px-4 py-3 text-sm text-destructive">{error}</div> : null}
 
-        <div className="grid gap-4 md:grid-cols-3">
-          <div className="metric-tile">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Total loaded</p>
-            <p className="mt-3 text-2xl font-semibold">{isLoading ? "..." : users.length}</p>
-          </div>
-          <div className="metric-tile">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Mentors on page</p>
-            <p className="mt-3 text-2xl font-semibold">{isLoading ? "..." : users.filter((user) => user.role === "mentor").length}</p>
-          </div>
-          <div className="metric-tile">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">Admins on page</p>
-            <p className="mt-3 text-2xl font-semibold">{isLoading ? "..." : users.filter((user) => user.role === "admin").length}</p>
-          </div>
-        </div>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <AdminStatCard label="Total Loaded" value={metrics.total} detail="Current admin page size" icon={UserCog} tone="text-primary" />
+        <AdminStatCard label="Suspended" value={metrics.suspended} detail="Accounts blocked from access" icon={UserX} tone="text-destructive" />
+        <AdminStatCard label="Admins" value={metrics.admins} detail="Privileged users on this page" icon={ShieldAlert} tone="text-warning" />
+        <AdminStatCard label="Mentors" value={metrics.mentors} detail="Mentor role assignments" icon={PencilLine} tone="text-secondary" />
+      </div>
 
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <CardTitle>All Users</CardTitle>
-                <CardDescription>Live backend user records for the current admin view.</CardDescription>
-              </div>
-              <Button variant="premium" size="sm">
-                <Users className="mr-2 h-4 w-4" />
-                Export CSV
-              </Button>
+      <Card>
+        <CardHeader className="gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <CardTitle className="text-lg">Account Directory</CardTitle>
+            <CardDescription>Search, edit, suspend, or remove user accounts.</CardDescription>
+          </div>
+          <div className="flex w-full max-w-sm gap-2">
+            <Input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="Search by name or email"
+            />
+            <Button variant="outline" onClick={() => void loadUsers(query)}>Search</Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 6 }, (_, index) => <Skeleton key={index} className="h-14 w-full" />)}
             </div>
-          </CardHeader>
-          <CardContent>
+          ) : users.length === 0 ? (
+            <EmptyState title="No users found" description="Try a broader search or create more test accounts to populate this view." />
+          ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border text-muted-foreground">
-                    <th className="px-4 py-3 text-left font-medium">User</th>
-                    <th className="px-4 py-3 text-left font-medium">Role</th>
-                    <th className="px-4 py-3 text-left font-medium">Joined</th>
-                    <th className="px-4 py-3 text-left font-medium">Actions</th>
+                  <tr className="border-b border-border text-left text-muted-foreground">
+                    <th className="px-4 py-3 font-medium">User</th>
+                    <th className="px-4 py-3 font-medium">Role</th>
+                    <th className="px-4 py-3 font-medium">Status</th>
+                    <th className="px-4 py-3 font-medium">Created</th>
+                    <th className="px-4 py-3 font-medium">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
-                  {isLoading ? (
-                    Array.from({ length: 5 }, (_, index) => (
-                      <tr key={index}>
-                        <td className="px-4 py-3"><Skeleton className="h-8 w-48" /></td>
-                        <td className="px-4 py-3"><Skeleton className="h-6 w-20" /></td>
-                        <td className="px-4 py-3"><Skeleton className="h-5 w-24" /></td>
-                        <td className="px-4 py-3"><Skeleton className="h-8 w-24" /></td>
-                      </tr>
-                    ))
-                  ) : users.map((user) => (
-                    <tr key={user.id} className="transition-colors hover:bg-muted/30">
+                  {users.map((user) => (
+                    <tr key={user.id} className="hover:bg-muted/25">
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="bg-gradient-cta flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold text-white">
+                          <div className="bg-gradient-cta flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold text-white">
                             {user.name[0]}
                           </div>
                           <div>
@@ -138,23 +197,17 @@ export default function AdminUsersPage() {
                           </div>
                         </div>
                       </td>
+                      <td className="px-4 py-3"><Badge variant={user.role === "admin" ? "destructive" : user.role === "mentor" ? "premium" : "secondary"} className="capitalize">{user.role}</Badge></td>
+                      <td className="px-4 py-3"><Badge variant={user.status === "ACTIVE" ? "success" : user.status === "SUSPENDED" ? "destructive" : "warning"}>{user.status}</Badge></td>
+                      <td className="px-4 py-3 text-muted-foreground">{new Date(user.createdAt).toLocaleDateString()}</td>
                       <td className="px-4 py-3">
-                        <Badge variant={roleColor[user.role]} className="capitalize">
-                          {user.role}
-                        </Badge>
-                      </td>
-                      <td className="px-4 py-3 text-muted-foreground">{formatDateLabel(user.createdAt)}</td>
-                      <td className="px-4 py-3">
-                        <div className="flex gap-1">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                            <Eye className="h-3.5 w-3.5" />
+                        <div className="flex flex-wrap gap-2">
+                          <Button asChild variant="ghost" size="icon">
+                            <Link href={`/dashboard/admin/users/${user.id}`}><Eye className="h-4 w-4" /></Link>
                           </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary">
-                            <UserCheck className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive">
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
+                          <Button variant="ghost" size="icon" onClick={() => openEdit(user)}><PencilLine className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" onClick={() => void handleSuspend(user)}><UserX className="h-4 w-4" /></Button>
+                          <Button variant="ghost" size="icon" className="text-destructive" onClick={() => void handleDelete(user)}><Trash2 className="h-4 w-4" /></Button>
                         </div>
                       </td>
                     </tr>
@@ -162,9 +215,52 @@ export default function AdminUsersPage() {
                 </tbody>
               </table>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    </ProtectedRoute>
+          )}
+        </CardContent>
+      </Card>
+
+      <Dialog open={Boolean(editingUser)} onOpenChange={(open) => !open && setEditingUser(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit User</DialogTitle>
+            <DialogDescription>Update identity, access status, and role assignment.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Name</label>
+              <Input value={draft.name} onChange={(event) => setDraft((current) => ({ ...current, name: event.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Email</label>
+              <Input value={draft.email} onChange={(event) => setDraft((current) => ({ ...current, email: event.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Status</label>
+              <select
+                value={draft.status}
+                onChange={(event) => setDraft((current) => ({ ...current, status: event.target.value as UserStatus }))}
+                className="flex h-10 w-full rounded-xl border border-border/70 bg-card/75 px-3 text-sm"
+              >
+                {statusChoices.map((status) => <option key={status} value={status}>{status}</option>)}
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Role</label>
+              <select
+                value={draft.role}
+                onChange={(event) => setDraft((current) => ({ ...current, role: event.target.value as typeof roleChoices[number] }))}
+                className="flex h-10 w-full rounded-xl border border-border/70 bg-card/75 px-3 text-sm"
+              >
+                {roleChoices.map((role) => <option key={role} value={role}>{role}</option>)}
+              </select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingUser(null)}>Cancel</Button>
+            <Button variant="premium" onClick={() => void handleSave()}>Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

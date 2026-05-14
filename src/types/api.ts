@@ -9,6 +9,7 @@ export type ApiResponse<T> = {
     page: number;
     limit: number;
     totalPages: number;
+    [key: string]: unknown;
   };
 };
 

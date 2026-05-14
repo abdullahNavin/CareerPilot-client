@@ -1,0 +1,11 @@
+"use client";
+
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
+
+export default function AdminSectionLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <ProtectedRoute allowedRoles={["admin"]}>{children}</ProtectedRoute>;
+}
