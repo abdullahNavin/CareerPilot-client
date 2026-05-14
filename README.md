@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CareerPilot AI
 
-## Getting Started
+## Project Overview
 
-First, run the development server:
+CareerPilot AI's frontend delivers a premium, production-ready interface for users to build ATS-friendly resumes, prepare for interviews, track job applications, analyze skill gaps, and interact with AI career assistants. It features a refined dark-first, obsidian-and-gold design tailored for a modern, professional experience.
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS (v4)
+- **Component Library:** ShadCN UI
+- **State Management:** Zustand (Global), TanStack Query (Server State)
+- **Forms & Validation:** React Hook Form, Zod
+- **Animations:** Framer Motion
+- **Data Visualization:** Recharts
+- **HTTP Client:** Axios
+- **Theming:** Next Themes
+- **Other Utilities:** Socket.io-client (Real-time), pdfjs-dist & mammoth (Document parsing)
+
+## AI Features Explanation
+
+CareerPilot AI is equipped with powerful, specialized AI tools to help users navigate their careers effectively:
+
+1. **AI Resume Analyzer:** Upload a PDF or DOCX resume along with a target job role. The AI evaluates the resume for ATS compatibility, identifies missing skills, flags formatting issues, and provides actionable recommendations.
+2. **Career Roadmap Generator:** Takes the user's current skills, target career, and experience level as input to generate a comprehensive visual timeline, outlining skill milestones and curated learning resources.
+3. **AI Interview Assistant:** Provides realistic, context-aware interview coaching through a real-time streaming chat interface, offering customized behavioral and technical questions based on the user's profile and desired role.
+4. **Skill Gap Analyzer:** Compares the user's current skillset against specific job requirements. It visualizes the match percentage and missing skills via a radar chart and recommends learning paths to bridge the gaps.
+
+## Setup Instructions
+
+### Prerequisites
+
+- Node.js (v20+ recommended)
+- npm, yarn, or pnpm
+
+### Installation
+
+1. Clone the repository and navigate to the project directory:
+   ```bash
+   cd careerpilot-client
+   ```
+
+2. Install the dependencies:
+   ```bash
+   npm install
+   ```
+
+### Environment Variables
+
+Create a `.env.local` file in the root directory and configure the necessary environment variables. You can copy the provided example:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Example environment variables:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000/api
+NEXT_PUBLIC_SOCKET_URL=http://localhost:8000
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id
+```
+
+### Running the Application
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The application will be available at [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Building for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+To create an optimized production build:
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build
+npm start
+```
